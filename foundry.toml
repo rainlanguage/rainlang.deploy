@@ -1,0 +1,125 @@
+# Release metadata, not foundry config: `rainix-tag-release` rewrites `version`
+# from the tag it is triggered by. `[external.*]` is the section foundry
+# reserves for another tool's config: it never merges it into a profile and
+# never warns about it.
+[external.package]
+name = "rainlang-deploy"
+# Deploy repo: a normal PR does not bump this; only a release moves it, in
+# lockstep with the frozen `src/generated/<tag>/` snapshot it names.
+version = "0.0.0"
+
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['dependencies']
+
+solc = "0.8.25"
+evm_version = "cancun"
+
+# CRITICAL: 1_000_000, NOT the 100_000 that rain.factory.deploy /
+# rain.extrospection.deploy use. Every Zoltu address in `src/generated/` is a
+# pure function of its creation bytecode, which is a pure function of these
+# settings AND the `rainlang` package sources it compiles against. These are the
+# settings the live parser, store and interpreter were produced with in the
+# pre-split hybrid `rainlang` repo; changing the run count regenerates the
+# `src/generated/candidate/` pins at different addresses, off the live
+# deployments.
+optimizer = true
+optimizer_runs = 1000000
+
+ffi = true
+
+bytecode_hash = "none"
+cbor_metadata = false
+
+fs_permissions = [
+  { access = "read-write", path = "./out/test/" },
+  { access = "read-write", path = "./meta" },
+  { access = "read-write", path = "./src" },
+  { access = "read-write", path = "./crates/bindings/abi" },
+  { access = "read-write", path = "./crates/test_fixtures/abi" },
+  { access = "read", path = "./out" },
+  # `LibRainDeploySnapshot.deployTag` reads `[external.package].version` to name
+  # the frozen per-release snapshot dir.
+  { access = "read", path = "foundry.toml" },
+  { access = "write", path = "./deployments/latest/RainlangParser" },
+  { access = "write", path = "./deployments/latest/RainlangStore" },
+  { access = "write", path = "./deployments/latest/RainlangInterpreter" },
+  { access = "write", path = "./deployments/latest/RainlangExpressionDeployer" },
+]
+
+remappings = [
+  # `rain-deploy` 0.1.7, and the `rain-sol-codegen` 0.1.36 it is built on, spell
+  # forge-std as `forge-std-1.16.2/`; the `rainlang` package and several of its
+  # dependencies still spell it `forge-std-1.16.1/`. Soldeer installs ONE
+  # version per package name, so the older prefix is aliased onto the installed
+  # one. Not cosmetic: two forge-std copies in one compilation are two DISTINCT
+  # `Vm` types, and a `vm` handed from one library to another would not type
+  # check.
+  #
+  # These live here rather than in `remappings.txt` because `forge soldeer
+  # install` owns that file and regenerates it from the installed set.
+  "forge-std-1.16.1/=dependencies/forge-std-1.16.2/",
+  # Same, for `rain-sol-codegen`. `rain-deploy` 0.1.7 needs 0.1.36, while
+  # `rainlang` and `rainlang-interface` import the `IParserToolingV1` /
+  # `ISubParserToolingV1` / `IOpcodeToolingV1` / `IIntegrityToolingV1`
+  # interfaces under the `rain-sol-codegen-0.1.0/` prefix. Those four
+  # interfaces are byte-identical between the two versions bar `pure` widening
+  # to `view` on three functions, which an implementation is free to narrow
+  # again, so nothing here moves any contract's bytecode.
+  "rain-sol-codegen-0.1.0/=dependencies/rain-sol-codegen-0.1.36/",
+]
+
+gas_limit = "18446744073709551615"
+
+# `recursive_deps` is off, so every package an import resolves through is
+# declared here, including the ones reached only through `rainlang`'s src.
+[dependencies]
+forge-std = "1.16.2"
+"@openzeppelin-contracts" = "5.6.1"
+rainlang = "0.2.0"
+"rain-datacontract" = "0.1.9"
+rain-deploy = "0.1.7"
+"rain-extrospection" = "0.1.14"
+"rain-intorastring" = "0.1.0"
+"rain-lib-hash" = "0.1.0"
+"rain-lib-memkv" = "0.1.0"
+"rain-lib-typecast" = "0.1.0"
+"rain-math-binary" = "0.1.4"
+"rain-math-float" = "0.1.1"
+"rain-metadata" = "0.1.0"
+rain-sol-codegen = "0.1.36"
+"rain-solmem" = "0.1.28"
+"rain-string" = "0.2.0"
+"rain-tofu-erc20-decimals" = "0.1.1"
+"rainlang-interface" = "0.2.8"
+
+[soldeer]
+recursive_deps = false
+
+[fuzz]
+runs = 2048
+
+# One alias per network `LibRainDeploy.supportedNetworks()` returns, which is
+# what `script/Deploy.sol` broadcasts to.
+[rpc_endpoints]
+arbitrum = "${ARBITRUM_RPC_URL}"
+base = "${BASE_RPC_URL}"
+base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
+ethereum = "${ETHEREUM_RPC_URL}"
+flare = "${FLARE_RPC_URL}"
+hyperevm = "${HYPEREVM_RPC_URL}"
+polygon = "${POLYGON_RPC_URL}"
+
+# `rainix-manual-sol-artifacts` passes `--verify` by default and exports exactly
+# these variable names, so a deploy without this section broadcasts and then
+# fails with no API key configured for the chain. One entry per
+# `[rpc_endpoints]` alias, because the deploy goes to all of them.
+[etherscan]
+arbitrum = { key = "${CI_DEPLOY_ARBITRUM_ETHERSCAN_API_KEY}" }
+base = { key = "${CI_DEPLOY_BASE_ETHERSCAN_API_KEY}" }
+base_sepolia = { key = "${CI_DEPLOY_BASE_SEPOLIA_ETHERSCAN_API_KEY}" }
+ethereum = { key = "${CI_DEPLOY_ETHEREUM_ETHERSCAN_API_KEY}", chain = 1 }
+flare = { key = "${CI_DEPLOY_FLARE_ETHERSCAN_API_KEY}" }
+hyperevm = { key = "${CI_DEPLOY_HYPEREVM_ETHERSCAN_API_KEY}", chain = 999 }
+polygon = { key = "${CI_DEPLOY_POLYGON_ETHERSCAN_API_KEY}" }

@@ -1,0 +1,14 @@
+out
+cache
+result
+.env
+target
+dependencies
+remappings.txt
+.DS_Store
+.direnv
+.pre-commit-config.yaml
+.claude
+
+# This is for our deploy scripts that report the addresses of deployed contracts
+deployments

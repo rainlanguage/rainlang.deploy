@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: LicenseRef-DCL-1.0
+// SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
+pragma solidity =0.8.25;
+
+import {Script} from "forge-std-1.16.1/src/Script.sol";
+import {LibAllStandardOps} from "rainlang-0.2.0/src/lib/op/LibAllStandardOps.sol";
+
+/// @title BuildAuthoringMeta
+/// @notice Forge script that writes raw ABI-encoded AuthoringMeta bytes to
+/// disk for each parser. The output files are consumed by the `rainlang-prelude`
+/// meta build pipeline which deflates and cbor-encodes them.
+contract BuildAuthoringMeta is Script {
+    /// Writes the standard ops' raw ABI-encoded authoring meta bytes to disk.
+    /// The output file is consumed by the `rainlang-prelude` meta build
+    /// pipeline to produce the final deflated/cbor-encoded meta.
+    function run() external {
+        vm.writeFileBinary("meta/AuthoringMeta.rain.meta", LibAllStandardOps.authoringMetaV2());
+    }
+}
