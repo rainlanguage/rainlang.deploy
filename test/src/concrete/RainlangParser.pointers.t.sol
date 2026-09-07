@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {Test} from "forge-std-1.16.2/src/Test.sol";
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.0/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.1/src/abstract/BaseRainlangParser.sol";
 import {
     OPERAND_HANDLER_FUNCTION_POINTERS,
     LITERAL_PARSER_FUNCTION_POINTERS,
     PARSE_META
 } from "../../../src/generated/RainlangParserPointers.sol";
-import {LibAllStandardOps, AuthoringMetaV2} from "rainlang-0.2.0/src/lib/op/LibAllStandardOps.sol";
+import {LibAllStandardOps, AuthoringMetaV2} from "rainlang-0.2.1/src/lib/op/LibAllStandardOps.sol";
 import {LibGenParseMeta} from "rainlang-interface-0.2.8/src/lib/codegen/LibGenParseMeta.sol";
 
 contract RainlangParserPointersTest is Test {
