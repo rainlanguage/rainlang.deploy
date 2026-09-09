@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BaseRainlangExpressionDeployer} from "rainlang-0.2.0/src/abstract/BaseRainlangExpressionDeployer.sol";
-import {BaseRainlangParser} from "rainlang-0.2.0/src/abstract/BaseRainlangParser.sol";
+import {BaseRainlangExpressionDeployer} from "rainlang-0.2.1/src/abstract/BaseRainlangExpressionDeployer.sol";
+import {BaseRainlangParser} from "rainlang-0.2.1/src/abstract/BaseRainlangParser.sol";
 import {INTEGRITY_FUNCTION_POINTERS, DESCRIBED_BY_META_HASH} from "../generated/RainlangExpressionDeployerPointers.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 // Referenced by NatSpec only.

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BaseRainlangInterpreter} from "rainlang-0.2.0/src/abstract/BaseRainlangInterpreter.sol";
+import {BaseRainlangInterpreter} from "rainlang-0.2.1/src/abstract/BaseRainlangInterpreter.sol";
 import {
 
     // Exported for convenience.

@@ -3,10 +3,10 @@
 pragma solidity =0.8.25;
 
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
-import {BaseRainlang} from "rainlang-0.2.0/src/abstract/BaseRainlang.sol";
+import {BaseRainlang} from "rainlang-0.2.1/src/abstract/BaseRainlang.sol";
 // Referenced by NatSpec only.
 //forge-lint: disable-next-line(unused-import)
-import {IRainlang} from "rainlang-0.2.0/src/interface/IRainlang.sol";
+import {IRainlang} from "rainlang-0.2.1/src/interface/IRainlang.sol";
 
 /// @title Rainlang
 /// @notice `BaseRainlang` bound to the deterministic Zoltu deploy addresses of

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {Test} from "forge-std-1.16.2/src/Test.sol";
 import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";
 import {LibExtrospectBytecode} from "rain-extrospection-0.1.14/src/lib/LibExtrospectBytecode.sol";
 import {INTERPRETER_DISALLOWED_OPS} from "rain-extrospection-0.1.14/src/lib/EVMOpcodes.sol";

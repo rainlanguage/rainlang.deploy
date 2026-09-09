@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Script} from "forge-std-1.16.1/src/Script.sol";
-import {LibAllStandardOps} from "rainlang-0.2.0/src/lib/op/LibAllStandardOps.sol";
+import {Script} from "forge-std-1.16.2/src/Script.sol";
+import {LibAllStandardOps} from "rainlang-0.2.1/src/lib/op/LibAllStandardOps.sol";
 
 /// @title BuildAuthoringMeta
 /// @notice Forge script that writes raw ABI-encoded AuthoringMeta bytes to
