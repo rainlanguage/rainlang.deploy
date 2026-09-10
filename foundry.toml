@@ -9,6 +9,15 @@ name = "rainlang-deploy"
 version = "0.0.0"
 
 [profile.default]
+# `rainlang` 0.2.1's committed test abstract
+# (`RainlangExpressionDeployerDeploymentTest`, reached from this repo's tests)
+# imports `rain-deploy-0.1.7/src/lib/LibRainDeploy.sol` for
+# `etchZoltuFactory`/`deployZoltu`, which are unchanged in 0.1.8. Soldeer
+# installs ONE version per package name, so the older prefix is aliased onto
+# the installed one. Lives here rather than in `remappings.txt` because
+# `forge soldeer` owns that file and regenerates it from the installed set.
+# Test-only: nothing under `src/` reaches rain-deploy, so no bytecode moves.
+remappings = ["rain-deploy-0.1.7/=dependencies/rain-deploy-0.1.8/"]
 src = 'src'
 out = 'out'
 libs = ['dependencies']
@@ -57,7 +66,7 @@ forge-std = "1.16.2"
 "@openzeppelin-contracts" = "5.6.1"
 "rainlang" = "0.2.1"
 "rain-datacontract" = "0.1.9"
-rain-deploy = "0.1.7"
+rain-deploy = "0.1.8"
 "rain-extrospection" = "0.1.14"
 "rain-intorastring" = "0.1.0"
 "rain-lib-hash" = "0.1.0"
@@ -87,6 +96,8 @@ base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
 ethereum = "${ETHEREUM_RPC_URL}"
 flare = "${FLARE_RPC_URL}"
 hyperevm = "${HYPEREVM_RPC_URL}"
+robinhood = "${ROBINHOOD_RPC_URL}"
+bsc = "${BSC_RPC_URL}"
 polygon = "${POLYGON_RPC_URL}"
 
 # `rainix-manual-sol-artifacts` passes `--verify` by default and exports exactly
@@ -100,4 +111,11 @@ base_sepolia = { key = "${CI_DEPLOY_BASE_SEPOLIA_ETHERSCAN_API_KEY}" }
 ethereum = { key = "${CI_DEPLOY_ETHEREUM_ETHERSCAN_API_KEY}", chain = 1 }
 flare = { key = "${CI_DEPLOY_FLARE_ETHERSCAN_API_KEY}" }
 hyperevm = { key = "${CI_DEPLOY_HYPEREVM_ETHERSCAN_API_KEY}", chain = 999 }
+# Robinhood Chain (4663) is not indexed by Etherscan V2. Its Blockscout speaks
+# the Etherscan API, so the entry points there (the key is ignored). That
+# explorer has rejected non-browser clients, so if `--verify` fails there,
+# verify afterwards through Sourcify: `forge verify-contract --verifier
+# sourcify --chain 4663 ...`.
+robinhood = { key = "${CI_DEPLOY_ROBINHOOD_ETHERSCAN_API_KEY}", chain = 4663, url = "https://robinhoodchain.blockscout.com/api" }
+bsc = { key = "${CI_DEPLOY_BSC_ETHERSCAN_API_KEY}", chain = 56 }
 polygon = { key = "${CI_DEPLOY_POLYGON_ETHERSCAN_API_KEY}" }
