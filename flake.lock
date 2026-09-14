@@ -249,11 +249,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778746225,
-        "narHash": "sha256-AwCvQF3zlhjO8eQWBrkjMy6buhNXDabN6/DeHq5En+A=",
+        "lastModified": 1789388796,
+        "narHash": "sha256-rDKQhtV/wUpIjisjmrsAAuC/UlMG+TSDe1UvpZzQldE=",
         "owner": "rainlanguage",
         "repo": "rain.cli",
-        "rev": "bbf79984f43aae3ef8f72f60a2ca46108f27f12f",
+        "rev": "91d70ac49ce5925414b246d13d6fe17b67fbb0f0",
         "type": "github"
       },
       "original": {

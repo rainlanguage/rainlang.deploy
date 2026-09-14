@@ -10,7 +10,7 @@ import {RainlangExpressionDeployer} from "../concrete/RainlangExpressionDeployer
 import {Rainlang} from "../concrete/Rainlang.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
-import {LibDecimalFloatDeploy} from "rain-math-float-0.1.1/src/lib/deploy/LibDecimalFloatDeploy.sol";
+import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.2/src/lib/deploy/LibDecimalFloatDeploy.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.1/src/lib/LibTOFUTokenDecimals.sol";
 import {
     CREATION_CODE as PARSER_CREATION_CODE_CANDIDATE,
