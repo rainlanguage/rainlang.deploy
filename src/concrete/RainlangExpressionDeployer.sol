@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BaseRainlangExpressionDeployer} from "rainlang-0.2.1/src/abstract/BaseRainlangExpressionDeployer.sol";
-import {BaseRainlangParser} from "rainlang-0.2.1/src/abstract/BaseRainlangParser.sol";
+import {BaseRainlangExpressionDeployer} from "rainlang-0.2.6/src/abstract/BaseRainlangExpressionDeployer.sol";
+import {BaseRainlangParser} from "rainlang-0.2.6/src/abstract/BaseRainlangParser.sol";
 import {INTEGRITY_FUNCTION_POINTERS, DESCRIBED_BY_META_HASH} from "../generated/RainlangExpressionDeployerPointers.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 // Referenced by NatSpec only.
 //forge-lint: disable-next-line(unused-import)
-import {IDescribedByMetaV1} from "rain-metadata-0.1.0/src/interface/IDescribedByMetaV1.sol";
+import {IDescribedByMetaV1} from "rain-metadata-0.1.7/src/interface/IDescribedByMetaV1.sol";
 
 /// @title RainlangExpressionDeployer
 /// @notice `BaseRainlangExpressionDeployer` bound to the parser at its

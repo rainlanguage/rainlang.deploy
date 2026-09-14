@@ -9,15 +9,6 @@ name = "rainlang-deploy"
 version = "0.0.0"
 
 [profile.default]
-# `rainlang` 0.2.1's committed test abstract
-# (`RainlangExpressionDeployerDeploymentTest`, reached from this repo's tests)
-# imports `rain-deploy-0.1.7/src/lib/LibRainDeploy.sol` for
-# `etchZoltuFactory`/`deployZoltu`, which are unchanged in 0.1.8. Soldeer
-# installs ONE version per package name, so the older prefix is aliased onto
-# the installed one. Lives here rather than in `remappings.txt` because
-# `forge soldeer` owns that file and regenerates it from the installed set.
-# Test-only: nothing under `src/` reaches rain-deploy, so no bytecode moves.
-remappings = ["rain-deploy-0.1.7/=dependencies/rain-deploy-0.1.8/"]
 src = 'src'
 out = 'out'
 libs = ['dependencies']
@@ -64,22 +55,23 @@ gas_limit = "18446744073709551615"
 [dependencies]
 forge-std = "1.16.2"
 "@openzeppelin-contracts" = "5.6.1"
-"rainlang" = "0.2.1"
+"rainlang" = "0.2.6"
 "rain-datacontract" = "0.1.9"
-rain-deploy = "0.1.8"
+rain-deploy = "0.1.10"
 "rain-extrospection" = "0.1.14"
 "rain-intorastring" = "0.1.0"
 "rain-lib-hash" = "0.1.0"
 "rain-lib-memkv" = "0.1.0"
-"rain-lib-typecast" = "0.1.0"
+"rain-lib-typecast" = "0.1.4"
 "rain-math-binary" = "0.1.4"
-"rain-math-float" = "0.1.1"
-"rain-metadata" = "0.1.0"
-rain-sol-codegen = "0.1.36"
+"rain-math-float" = "0.2.1"
+"rain-math-float-deploy" = "0.1.2"
+"rain-metadata" = "0.1.7"
+rain-sol-codegen = "0.1.37"
 "rain-solmem" = "0.1.28"
 "rain-string" = "0.2.0"
 "rain-tofu-erc20-decimals" = "0.1.1"
-"rainlang-interface" = "0.2.8"
+"rainlang-interface" = "0.2.9"
 
 [soldeer]
 recursive_deps = false
