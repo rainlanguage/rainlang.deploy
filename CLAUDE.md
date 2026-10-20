@@ -48,8 +48,9 @@ After any change affecting bytecode, including a `rainlang` package bump:
 
 1. `nix develop -c rainlang-prelude`
 2. `nix develop -c forge script --silent ./script/Build.sol`
-3. `nix develop -c forge fmt`
-4. Repeat until `src/generated/` stops changing — deploy constants cascade
+3. `./script/build.sh` (installs the staged `foundry.toml`/`.env.example`)
+4. `nix develop -c forge fmt`
+5. Repeat until `src/generated/` stops changing — deploy constants cascade
    parser → expression deployer → Rainlang; interpreter also cascades to
    Rainlang.
 

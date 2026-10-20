@@ -2,16 +2,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {DeployCandidate, DeploySuite, RainDeploySuitesBase} from "./RainDeploySuitesBase.sol";
-import {RainlangParser} from "../concrete/RainlangParser.sol";
-import {RainlangStore} from "../concrete/RainlangStore.sol";
-import {RainlangInterpreter} from "../concrete/RainlangInterpreter.sol";
-import {RainlangExpressionDeployer} from "../concrete/RainlangExpressionDeployer.sol";
-import {Rainlang} from "../concrete/Rainlang.sol";
+import {DeployCandidate, DeployDependency, DeploySuite, RainDeploySuitesBase} from "./RainDeploySuitesBase.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
-import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.2/src/lib/deploy/LibDecimalFloatDeploy.sol";
-import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.1/src/lib/LibTOFUTokenDecimals.sol";
+import {
+    DEPLOYED_ADDRESS as TOFU_DECIMALS_DEPLOYED_ADDRESS,
+    RUNTIME_CODE as TOFU_DECIMALS_RUNTIME_CODE
+} from "rain-tofu-erc20-decimals-deploy-0.1.0/src/generated/0_1_0/TOFUTokenDecimals.sol";
 import {
     CREATION_CODE as PARSER_CREATION_CODE_CANDIDATE,
     RUNTIME_CODE as PARSER_RUNTIME_CODE_CANDIDATE
@@ -82,11 +79,11 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     }
 
     /// No dependencies. Declared through a named helper rather than an inline
-    /// `new address[](0)` so an empty list reads as a measured result and not
+    /// `new DeployDependency[](0)` so an empty list reads as a measured result and not
     /// as a list somebody forgot to fill in.
-    /// @return The dependency addresses: none.
-    function noDependencies() internal pure returns (address[] memory) {
-        return new address[](0);
+    /// @return The dependencies: none.
+    function noDependencies() internal pure returns (DeployDependency[] memory) {
+        return new DeployDependency[](0);
     }
 
     /// This repo's rolling `RainlangParser` candidate. Each candidate is a
@@ -96,9 +93,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// legacy codegen's stack.
     ///
     /// Dependencies: none. Parsing is entirely in-contract — the parser's own
-    /// tables are operand handlers and literal parsers, and the log tables are
-    /// reached only from the `run` implementations in `src/lib/op/math/`, which
-    /// live in the interpreter's dispatch table and not this one.
+    /// tables are operand handlers and literal parsers, and TOFU is reached only
+    /// from the ERC20 `run` implementations, which live in the interpreter's
+    /// dispatch table and not this one.
     /// @return The candidate.
     function parserCandidate() internal pure returns (DeployCandidate memory) {
         return DeployCandidate({
@@ -111,7 +108,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 artifactPath: "src/concrete/RainlangParser.sol:RainlangParser",
                 dependencies: noDependencies()
             }),
-            sourceCreationCode: type(RainlangParser).creationCode
+            unanchorableReason: ""
         });
     }
 
@@ -131,23 +128,22 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
                 dependencies: noDependencies()
             }),
-            sourceCreationCode: type(RainlangStore).creationCode
+            unanchorableReason: ""
         });
     }
 
     /// This repo's rolling `RainlangInterpreter` candidate.
     ///
-    /// Dependencies: the decimal float log tables, staticcalled by the `pow`,
-    /// `exp`, `exp2`, `sqrt`, `gm` and `exponential-growth` opcodes, and the
-    /// TOFU decimals contract, staticcalled by the ERC20 opcodes. This is the
-    /// only candidate that reaches either: both are read from `run`
-    /// implementations, and the interpreter is the only contract here holding a
-    /// table of those.
+    /// Dependencies: the TOFU decimals contract, staticcalled by the ERC20
+    /// opcodes. This is the only candidate that reaches it: it is read from
+    /// `run` implementations, and the interpreter is the only contract here
+    /// holding a table of those.
     /// @return The candidate.
     function interpreterCandidate() internal pure returns (DeployCandidate memory) {
-        address[] memory deps = new address[](2);
-        deps[0] = LibDecimalFloatDeploy.ZOLTU_DEPLOYED_LOG_TABLES_ADDRESS;
-        deps[1] = address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT);
+        DeployDependency[] memory deps = new DeployDependency[](1);
+        deps[0] = DeployDependency({
+            deployedAddress: TOFU_DECIMALS_DEPLOYED_ADDRESS, runtimeCode: TOFU_DECIMALS_RUNTIME_CODE
+        });
         return DeployCandidate({
             snapshot: DeploySuite({
                 suite: "interpreter",
@@ -158,7 +154,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
                 dependencies: deps
             }),
-            sourceCreationCode: type(RainlangInterpreter).creationCode
+            unanchorableReason: ""
         });
     }
 
@@ -171,13 +167,15 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// NOT the store or the interpreter. This contract parses, serialises and
     /// integrity-checks; the interpreter is what later evals the bytecode it
     /// returns and the store is what that eval writes to, and it calls
-    /// neither. NOT the log tables or TOFU either: the table it holds is
+    /// neither. NOT TOFU either: the table it holds is
     /// `LibAllStandardOps.integrityFunctionPointers()`, the integrity
-    /// functions, not the `run` implementations that reach those two.
+    /// functions, not the `run` implementations that reach it.
     /// @return The candidate.
     function expressionDeployerCandidate() internal pure returns (DeployCandidate memory) {
-        address[] memory deps = new address[](1);
-        deps[0] = LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS;
+        DeployDependency[] memory deps = new DeployDependency[](1);
+        deps[0] = DeployDependency({
+            deployedAddress: LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS, runtimeCode: PARSER_RUNTIME_CODE_CANDIDATE
+        });
         return DeployCandidate({
             snapshot: DeploySuite({
                 suite: "expression-deployer",
@@ -188,7 +186,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 artifactPath: "src/concrete/RainlangExpressionDeployer.sol:RainlangExpressionDeployer",
                 dependencies: deps
             }),
-            sourceCreationCode: type(RainlangExpressionDeployer).creationCode
+            unanchorableReason: ""
         });
     }
 
@@ -206,11 +204,21 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// from. `Rainlang` names four addresses and TOFU is not one of them.
     /// @return The candidate.
     function rainlangCandidate() internal pure returns (DeployCandidate memory) {
-        address[] memory deps = new address[](4);
-        deps[0] = LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS;
-        deps[1] = LibInterpreterDeploy.STORE_DEPLOYED_ADDRESS;
-        deps[2] = LibInterpreterDeploy.INTERPRETER_DEPLOYED_ADDRESS;
-        deps[3] = LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS;
+        DeployDependency[] memory deps = new DeployDependency[](4);
+        deps[0] = DeployDependency({
+            deployedAddress: LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS, runtimeCode: PARSER_RUNTIME_CODE_CANDIDATE
+        });
+        deps[1] = DeployDependency({
+            deployedAddress: LibInterpreterDeploy.STORE_DEPLOYED_ADDRESS, runtimeCode: STORE_RUNTIME_CODE_CANDIDATE
+        });
+        deps[2] = DeployDependency({
+            deployedAddress: LibInterpreterDeploy.INTERPRETER_DEPLOYED_ADDRESS,
+            runtimeCode: INTERPRETER_RUNTIME_CODE_CANDIDATE
+        });
+        deps[3] = DeployDependency({
+            deployedAddress: LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS,
+            runtimeCode: EXPRESSION_DEPLOYER_RUNTIME_CODE_CANDIDATE
+        });
         return DeployCandidate({
             snapshot: DeploySuite({
                 suite: "rainlang",
@@ -221,7 +229,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 artifactPath: "src/concrete/Rainlang.sol:Rainlang",
                 dependencies: deps
             }),
-            sourceCreationCode: type(Rainlang).creationCode
+            unanchorableReason: ""
         });
     }
 }

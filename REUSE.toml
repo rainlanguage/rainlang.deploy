@@ -5,6 +5,7 @@ path = [
   ".cargo/**/",
   ".coderabbit.yaml",
   ".devcontainer.json",
+  ".env.example",
   ".envrc",
   ".github/workflows/**/",
   ".gitignore",
