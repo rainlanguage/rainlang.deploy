@@ -15,7 +15,9 @@ extend are NOT here — they arrive as the `rainlang` Soldeer package.
 
 ## Conventions an agent would get wrong
 
-- Optimizer **1,000,000 runs**, NOT the 100,000 sibling deploy repos use.
+- Optimizer **1,000,000 runs**, NOT the 100,000 sibling deploy repos use;
+  `RainlangInterpreter`/`RainlangParser` are restricted to the 65,000-run
+  `eip170` profile to fit EIP-170 (one shared count: tests import both).
   Deterministic (Zoltu) deploy: every address is a pure function of the creation
   bytecode, so this, solc `=0.8.25`, `evm_version = "cancun"`, no CBOR metadata,
   and the pinned `rainlang` sources all move the pins if changed.
