@@ -69,6 +69,12 @@ checksum = "81e6c67cc0e2c573784f1c03e70db1ea9537e8161065ded0aaf90bc11b6b6150"
 integrity = "f1509e5fa3a4182b625f4650fb368fe605f76ffcaeaa6fbbf1159346b69f2809"
 
 [[dependencies]]
+name = "rain-math-float-deploy"
+version = "0.1.4"
+git = "https://github.com/rainlanguage/rain.math.float.deploy.git"
+rev = "9ff057239879342bd8f5ae66d13ec1f6778a5150"
+
+[[dependencies]]
 name = "rain-metadata"
 version = "0.1.43"
 url = "https://soldeer-revisions.s3.amazonaws.com/rain-metadata/0_1_43_03-09-2026_09:14:04_rain.zip"
@@ -113,9 +119,8 @@ integrity = "68fe11e0be91a84748e0055d5350ca05a75c309552234832eb748a3766b94028"
 [[dependencies]]
 name = "rainlang"
 version = "0.2.13"
-url = "https://soldeer-revisions.s3.amazonaws.com/rainlang/0_2_13_20-10-2026_16:58:23_rainlang.zip"
-checksum = "207b317a581b8194d75b96164dfaa810e438c508c39e32af1d929c1521c48be4"
-integrity = "334ca68fdf6177e9f2e4872885e3b44711b040f41fd045d109b3699cadec6ddb"
+git = "https://github.com/rainlanguage/rainlang.git"
+rev = "2e92479be5305a92973eb7208d4a8a598cee3de6"
 
 [[dependencies]]
 name = "rainlang-interface"

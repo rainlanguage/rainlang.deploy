@@ -6,6 +6,7 @@ import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {DeployCandidate, DeployDependency} from "../../../src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.4/src/lib/LibTOFUTokenDecimals.sol";
+import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.4/src/lib/deploy/LibDecimalFloatDeploy.sol";
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
 import {RainlangStore} from "../../../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";
@@ -29,6 +30,8 @@ import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 /// read here is `internal pure` on the abstract, and unlike `script/Build.sol`
 /// there is no second entry point that widening would expose.
 contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
+    uint256 constant EIP170_MAX_RUNTIME_CODE_SIZE = 0x6000;
+
     /// The `Manual sol artifacts` dispatch choices, transcribed from
     /// `.github/workflows/manual-sol-artifacts.yaml`. A second hard-coded list
     /// on purpose: the workflow is YAML that no Solidity test can read (the
@@ -216,8 +219,9 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// well as to that candidate's dependencies.
     /// @return The external deployment addresses.
     function externalDeployments() internal pure returns (address[] memory) {
-        address[] memory externals = new address[](1);
+        address[] memory externals = new address[](2);
         externals[0] = address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT);
+        externals[1] = LibDecimalFloatDeploy.ZOLTU_DEPLOYED_DECIMAL_FLOAT_ADDRESS;
         return externals;
     }
 
@@ -253,7 +257,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
 
     /// PROPERTY: every declared dependency's `runtimeCode` is the code that is
     /// deployed at its address — a sibling's recorded runtime code, or the code
-    /// hash the TOFU package pins for its singleton.
+    /// hash the TOFU or DecimalFloat package pins for its singleton.
     function testDependencyRuntimeCodeMatchesItsAddress() external pure {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
@@ -262,6 +266,9 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
                 bytes32 expected = bytes32(0);
                 if (deps[j].deployedAddress == address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT)) {
                     expected = LibTOFUTokenDecimals.TOFU_DECIMALS_EXPECTED_CODE_HASH;
+                }
+                if (deps[j].deployedAddress == LibDecimalFloatDeploy.ZOLTU_DEPLOYED_DECIMAL_FLOAT_ADDRESS) {
+                    expected = LibDecimalFloatDeploy.DECIMAL_FLOAT_CONTRACT_HASH;
                 }
                 for (uint256 k = 0; k < candidates.length; k++) {
                     if (deps[j].deployedAddress == candidates[k].snapshot.storedDeployedAddress) {
@@ -275,6 +282,18 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
                     string.concat("dependency runtime code mismatch: ", candidates[i].snapshot.suite)
                 );
             }
+        }
+    }
+
+    /// PROPERTY: every candidate's runtime code fits EIP-170.
+    function testCandidateRuntimeCodeFitsEip170() external pure {
+        DeployCandidate[] memory candidates = checkedCandidateSuites();
+        for (uint256 i = 0; i < candidates.length; i++) {
+            assertLe(
+                candidates[i].snapshot.storedRuntimeCode.length,
+                EIP170_MAX_RUNTIME_CODE_SIZE,
+                string.concat("runtime code over EIP-170: ", candidates[i].snapshot.suite)
+            );
         }
     }
 

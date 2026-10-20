@@ -10,6 +10,10 @@ import {
     RUNTIME_CODE as TOFU_DECIMALS_RUNTIME_CODE
 } from "rain-tofu-erc20-decimals-deploy-0.1.0/src/generated/0_1_0/TOFUTokenDecimals.sol";
 import {
+    DEPLOYED_ADDRESS as DECIMAL_FLOAT_DEPLOYED_ADDRESS,
+    RUNTIME_CODE as DECIMAL_FLOAT_RUNTIME_CODE
+} from "rain-math-float-deploy-0.1.4/src/generated/candidate/DecimalFloat.sol";
+import {
     CREATION_CODE as PARSER_CREATION_CODE_CANDIDATE,
     RUNTIME_CODE as PARSER_RUNTIME_CODE_CANDIDATE
 } from "../generated/candidate/RainlangParser.sol";
@@ -135,14 +139,19 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// This repo's rolling `RainlangInterpreter` candidate.
     ///
     /// Dependencies: the TOFU decimals contract, staticcalled by the ERC20
-    /// opcodes. This is the only candidate that reaches it: it is read from
-    /// `run` implementations, and the interpreter is the only contract here
-    /// holding a table of those.
+    /// opcodes, and DecimalFloat, called for `pow` and `sqrt` by the power,
+    /// sqrt, exp, exp2, gm and exponential-growth opcodes. This is the only
+    /// candidate that reaches either: both are read from `run`
+    /// implementations, and the interpreter is the only contract here holding
+    /// a table of those.
     /// @return The candidate.
     function interpreterCandidate() internal pure returns (DeployCandidate memory) {
-        DeployDependency[] memory deps = new DeployDependency[](1);
+        DeployDependency[] memory deps = new DeployDependency[](2);
         deps[0] = DeployDependency({
             deployedAddress: TOFU_DECIMALS_DEPLOYED_ADDRESS, runtimeCode: TOFU_DECIMALS_RUNTIME_CODE
+        });
+        deps[1] = DeployDependency({
+            deployedAddress: DECIMAL_FLOAT_DEPLOYED_ADDRESS, runtimeCode: DECIMAL_FLOAT_RUNTIME_CODE
         });
         return DeployCandidate({
             snapshot: DeploySuite({
