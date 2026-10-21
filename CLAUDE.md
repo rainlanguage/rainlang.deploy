@@ -15,7 +15,9 @@ extend are NOT here — they arrive as the `rainlang` Soldeer package.
 
 ## Conventions an agent would get wrong
 
-- Optimizer **1,000,000 runs**, NOT the 100,000 sibling deploy repos use.
+- Optimizer **1,000,000 runs**, NOT the 100,000 sibling deploy repos use;
+  `RainlangInterpreter`/`RainlangParser` are restricted to the 65,000-run
+  `eip170` profile to fit EIP-170 (one shared count: tests import both).
   Deterministic (Zoltu) deploy: every address is a pure function of the creation
   bytecode, so this, solc `=0.8.25`, `evm_version = "cancun"`, no CBOR metadata,
   and the pinned `rainlang` sources all move the pins if changed.
@@ -48,8 +50,9 @@ After any change affecting bytecode, including a `rainlang` package bump:
 
 1. `nix develop -c rainlang-prelude`
 2. `nix develop -c forge script --silent ./script/Build.sol`
-3. `nix develop -c forge fmt`
-4. Repeat until `src/generated/` stops changing — deploy constants cascade
+3. `./script/build.sh` (installs the staged `foundry.toml`/`.env.example`)
+4. `nix develop -c forge fmt`
+5. Repeat until `src/generated/` stops changing — deploy constants cascade
    parser → expression deployer → Rainlang; interpreter also cascades to
    Rainlang.
 

@@ -2,20 +2,20 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BuildScript} from "rain-deploy-0.1.10/src/abstract/BuildScript.sol";
-import {LibRainDeploySnapshot} from "rain-deploy-0.1.10/src/lib/LibRainDeploySnapshot.sol";
-import {LibRainDeploy} from "rain-deploy-0.1.10/src/lib/LibRainDeploy.sol";
-import {LibCodeGen} from "rain-sol-codegen-0.1.37/src/lib/LibCodeGen.sol";
-import {LibFs} from "rain-sol-codegen-0.1.37/src/lib/LibFs.sol";
-import {LibGenParseMeta} from "rainlang-interface-0.2.9/src/lib/codegen/LibGenParseMeta.sol";
+import {BuildScript} from "rain-deploy-0.1.18/src/abstract/BuildScript.sol";
+import {LibRainDeploySnapshot} from "rain-deploy-0.1.18/src/lib/LibRainDeploySnapshot.sol";
+import {LibRainDeploy} from "rain-deploy-0.1.18/src/lib/LibRainDeploy.sol";
+import {LibCodeGen} from "rain-sol-codegen-0.1.39/src/lib/LibCodeGen.sol";
+import {LibFs} from "rain-sol-codegen-0.1.39/src/lib/LibFs.sol";
+import {LibGenParseMeta} from "rainlang-interface-0.2.13/src/lib/codegen/LibGenParseMeta.sol";
 import {DeployCandidate} from "../src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.6/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.14/src/abstract/BaseRainlangParser.sol";
 import {RainlangStore} from "../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../src/concrete/RainlangInterpreter.sol";
 import {RainlangExpressionDeployer} from "../src/concrete/RainlangExpressionDeployer.sol";
-import {LibAllStandardOps} from "rainlang-0.2.6/src/lib/op/LibAllStandardOps.sol";
+import {LibAllStandardOps} from "rainlang-0.2.14/src/lib/op/LibAllStandardOps.sol";
 
 /// One contract's generated snapshot and the released-suites lib emitted from
 /// its record.
@@ -23,9 +23,9 @@ struct GeneratedContract {
     /// Places the snapshot inside `src/generated/<dir>/` and names the
     /// generated released-suites lib.
     string contractName;
-    /// Snapshots are written from its `sourceCreationCode` and
-    /// `snapshot.dependencies`; the released lib takes its suite key and
-    /// artifact path from its `snapshot`.
+    /// Snapshots are written from what its `snapshot.artifactPath` compiles to
+    /// and its `snapshot.dependencies`; the released lib takes its suite key
+    /// and artifact path from its `snapshot`.
     DeployCandidate candidate;
 }
 
@@ -94,9 +94,10 @@ contract Build is BuildScript, RainlangDeploySuites {
         for (uint256 i = 0; i < contracts.length; i++) {
             LibRainDeploySnapshot.writeSnapshot(
                 vm,
+                recordRoot(),
                 LibRainDeploySnapshot.CANDIDATE,
                 contracts[i].contractName,
-                contracts[i].candidate.sourceCreationCode,
+                vm.getCode(contracts[i].candidate.snapshot.artifactPath),
                 contracts[i].candidate.snapshot.dependencies
             );
         }

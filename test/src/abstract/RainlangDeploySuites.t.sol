@@ -2,11 +2,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.16.2/src/Test.sol";
-import {DeployCandidate} from "../../../src/abstract/RainDeploySuitesBase.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
+import {DeployCandidate, DeployDependency} from "../../../src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
-import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.2/src/lib/deploy/LibDecimalFloatDeploy.sol";
-import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.1/src/lib/LibTOFUTokenDecimals.sol";
+import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.4/src/lib/LibTOFUTokenDecimals.sol";
+import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.5/src/lib/deploy/LibDecimalFloatDeploy.sol";
+import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
+import {RainlangStore} from "../../../src/concrete/RainlangStore.sol";
+import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";
+import {RainlangExpressionDeployer} from "../../../src/concrete/RainlangExpressionDeployer.sol";
+import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 
 /// @title RainlangDeploySuitesTest
 /// @notice The properties of this repo's ONE deploy declaration that
@@ -25,6 +30,8 @@ import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.1/src/lib/LibTO
 /// read here is `internal pure` on the abstract, and unlike `script/Build.sol`
 /// there is no second entry point that widening would expose.
 contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
+    uint256 constant EIP170_MAX_RUNTIME_CODE_SIZE = 0x6000;
+
     /// The `Manual sol artifacts` dispatch choices, transcribed from
     /// `.github/workflows/manual-sol-artifacts.yaml`. A second hard-coded list
     /// on purpose: the workflow is YAML that no Solidity test can read (the
@@ -81,8 +88,8 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
         }
     }
 
-    /// PROPERTY: every candidate's `artifactPath` resolves to the artifact its
-    /// `sourceCreationCode` was taken from.
+    /// PROPERTY: every candidate's `artifactPath` resolves to the contract its
+    /// suite key names, per `sourceCreationCode`.
     ///
     /// The path is declared text, never derived from the type, so it can name
     /// another contract or a contract that no longer exists and everything
@@ -94,7 +101,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
         for (uint256 i = 0; i < candidates.length; i++) {
             assertEq(
                 keccak256(vm.getCode(candidates[i].snapshot.artifactPath)),
-                keccak256(candidates[i].sourceCreationCode),
+                keccak256(sourceCreationCode(candidates[i].snapshot.suite)),
                 string.concat("artifact path is not this candidate's source: ", candidates[i].snapshot.suite)
             );
         }
@@ -111,11 +118,19 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     function testDependenciesAreNonZeroAndUnique() external pure {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
-            address[] memory deps = candidates[i].snapshot.dependencies;
+            DeployDependency[] memory deps = candidates[i].snapshot.dependencies;
             for (uint256 j = 0; j < deps.length; j++) {
-                assertNotEq(deps[j], address(0), string.concat("zero dependency: ", candidates[i].snapshot.suite));
+                assertNotEq(
+                    deps[j].deployedAddress,
+                    address(0),
+                    string.concat("zero dependency: ", candidates[i].snapshot.suite)
+                );
                 for (uint256 k = j + 1; k < deps.length; k++) {
-                    assertNotEq(deps[j], deps[k], string.concat("repeated dependency: ", candidates[i].snapshot.suite));
+                    assertNotEq(
+                        deps[j].deployedAddress,
+                        deps[k].deployedAddress,
+                        string.concat("repeated dependency: ", candidates[i].snapshot.suite)
+                    );
                 }
             }
         }
@@ -139,7 +154,9 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
                 if (i == j) {
                     continue;
                 }
-                if (!containsAddress(candidates[i].sourceCreationCode, candidates[j].snapshot.storedDeployedAddress)) {
+                if (!containsAddress(
+                        sourceCreationCode(candidates[i].snapshot.suite), candidates[j].snapshot.storedDeployedAddress
+                    )) {
                     continue;
                 }
                 assertTrue(
@@ -175,12 +192,14 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     function testCandidatesReachEveryDependencyTheyDeclare() external pure {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
-            address[] memory deps = candidates[i].snapshot.dependencies;
+            DeployDependency[] memory deps = candidates[i].snapshot.dependencies;
             for (uint256 j = 0; j < deps.length; j++) {
                 assertTrue(
-                    containsAddress(candidates[i].sourceCreationCode, deps[j]),
+                    containsAddress(sourceCreationCode(candidates[i].snapshot.suite), deps[j].deployedAddress),
                     string.concat(
-                        candidates[i].snapshot.suite, " declares a dependency it never reaches: ", vm.toString(deps[j])
+                        candidates[i].snapshot.suite,
+                        " declares a dependency it never reaches: ",
+                        vm.toString(deps[j].deployedAddress)
                     )
                 );
             }
@@ -193,16 +212,16 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// declaration against something the declaration did not supply, or it
     /// compares a list to itself.
     ///
-    /// Both addresses are imported from the package that deploys them and
-    /// never transcribed, so a package that moves its deployment moves this
-    /// with it. What is hand-maintained is the SET — a third external
+    /// The address is imported from the package that deploys it and never
+    /// transcribed, so a package that moves its deployment moves this with it.
+    /// What is hand-maintained is the SET — a second external
     /// deployment reaching a candidate is a line that has to be added here as
     /// well as to that candidate's dependencies.
     /// @return The external deployment addresses.
     function externalDeployments() internal pure returns (address[] memory) {
         address[] memory externals = new address[](2);
-        externals[0] = LibDecimalFloatDeploy.ZOLTU_DEPLOYED_LOG_TABLES_ADDRESS;
-        externals[1] = address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT);
+        externals[0] = address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT);
+        externals[1] = LibDecimalFloatDeploy.ZOLTU_DEPLOYED_DECIMAL_FLOAT_ADDRESS;
         return externals;
     }
 
@@ -210,18 +229,18 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// declares it as a dependency.
     ///
     /// `testCandidatesDependOnTheSiblingsTheyReach` is this same property over
-    /// the siblings, and the two externals are not siblings, so nothing there
-    /// covers them. They are the pair a trimmed list gets wrong in the
-    /// dangerous direction: with only the converse property standing over
-    /// them, dropping the log tables from the interpreter would go green, the
-    /// broadcast gate would stop asking for them, and `pow` would revert on the
-    /// first chain that does not carry them.
+    /// the siblings, and the externals are not siblings, so nothing there covers
+    /// them. They are what a trimmed list gets wrong in the dangerous direction:
+    /// with only the converse property standing over them, dropping TOFU from
+    /// the interpreter would go green, the broadcast gate would stop asking for
+    /// it, and the ERC20 opcodes would revert on the first chain that does not
+    /// carry it.
     function testCandidatesDependOnTheExternalsTheyReach() external pure {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         address[] memory externals = externalDeployments();
         for (uint256 i = 0; i < candidates.length; i++) {
             for (uint256 j = 0; j < externals.length; j++) {
-                if (!containsAddress(candidates[i].sourceCreationCode, externals[j])) {
+                if (!containsAddress(sourceCreationCode(candidates[i].snapshot.suite), externals[j])) {
                     continue;
                 }
                 assertTrue(
@@ -236,13 +255,69 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
         }
     }
 
+    /// PROPERTY: every declared dependency's `runtimeCode` is the code that is
+    /// deployed at its address — a sibling's recorded runtime code, or the code
+    /// hash the TOFU or DecimalFloat package pins for its singleton.
+    function testDependencyRuntimeCodeMatchesItsAddress() external pure {
+        DeployCandidate[] memory candidates = checkedCandidateSuites();
+        for (uint256 i = 0; i < candidates.length; i++) {
+            DeployDependency[] memory deps = candidates[i].snapshot.dependencies;
+            for (uint256 j = 0; j < deps.length; j++) {
+                bytes32 expected = bytes32(0);
+                if (deps[j].deployedAddress == address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT)) {
+                    expected = LibTOFUTokenDecimals.TOFU_DECIMALS_EXPECTED_CODE_HASH;
+                }
+                if (deps[j].deployedAddress == LibDecimalFloatDeploy.ZOLTU_DEPLOYED_DECIMAL_FLOAT_ADDRESS) {
+                    expected = LibDecimalFloatDeploy.DECIMAL_FLOAT_CONTRACT_HASH;
+                }
+                for (uint256 k = 0; k < candidates.length; k++) {
+                    if (deps[j].deployedAddress == candidates[k].snapshot.storedDeployedAddress) {
+                        expected = keccak256(candidates[k].snapshot.storedRuntimeCode);
+                    }
+                }
+                assertNotEq(expected, bytes32(0), string.concat("unknown dependency: ", candidates[i].snapshot.suite));
+                assertEq(
+                    keccak256(deps[j].runtimeCode),
+                    expected,
+                    string.concat("dependency runtime code mismatch: ", candidates[i].snapshot.suite)
+                );
+            }
+        }
+    }
+
+    /// PROPERTY: every candidate's runtime code fits EIP-170.
+    function testCandidateRuntimeCodeFitsEip170() external pure {
+        DeployCandidate[] memory candidates = checkedCandidateSuites();
+        for (uint256 i = 0; i < candidates.length; i++) {
+            assertLe(
+                candidates[i].snapshot.storedRuntimeCode.length,
+                EIP170_MAX_RUNTIME_CODE_SIZE,
+                string.concat("runtime code over EIP-170: ", candidates[i].snapshot.suite)
+            );
+        }
+    }
+
+    /// The creation code of the contract a suite key names, from the type
+    /// rather than from anything the declaration carries.
+    /// @param suite The suite key.
+    /// @return The creation code.
+    function sourceCreationCode(string memory suite) internal pure returns (bytes memory) {
+        bytes32 key = keccak256(bytes(suite));
+        if (key == keccak256("parser")) return type(RainlangParser).creationCode;
+        if (key == keccak256("store")) return type(RainlangStore).creationCode;
+        if (key == keccak256("interpreter")) return type(RainlangInterpreter).creationCode;
+        if (key == keccak256("expression-deployer")) return type(RainlangExpressionDeployer).creationCode;
+        if (key == keccak256("rainlang")) return type(Rainlang).creationCode;
+        revert(string.concat("no source for suite: ", suite));
+    }
+
     /// Whether `needle` appears in `deps`.
     /// @param deps The dependency list to search.
     /// @param needle The address to look for.
     /// @return Whether it is there.
-    function containsDependency(address[] memory deps, address needle) internal pure returns (bool) {
+    function containsDependency(DeployDependency[] memory deps, address needle) internal pure returns (bool) {
         for (uint256 i = 0; i < deps.length; i++) {
-            if (deps[i] == needle) {
+            if (deps[i].deployedAddress == needle) {
                 return true;
             }
         }

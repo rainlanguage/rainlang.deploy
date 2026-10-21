@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {Vm} from "forge-std-1.16.2/src/Vm.sol";
+import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 
 /// @notice Shared logic between `script/CopyArtifacts.sol` (writes the
 /// committed ABI). The `git-clean` CI job runs that writer then
@@ -28,9 +28,13 @@ library LibCopyArtifacts {
         return names;
     }
 
-    /// @notice Path of the live forge build artifact for a contract.
-    function livePath(string memory contractName) internal pure returns (string memory) {
-        return string.concat("out/", contractName, ".sol/", contractName, ".json");
+    /// @notice Path of the live forge build artifact for a contract: the
+    /// `default` compiler profile's when the source is also compiled under
+    /// `eip170`.
+    function livePath(Vm vm, string memory contractName) internal view returns (string memory) {
+        string memory dir = string.concat("out/", contractName, ".sol/", contractName);
+        string memory single = string.concat(dir, ".json");
+        return vm.exists(single) ? single : string.concat(dir, ".default.json");
     }
 
     /// @notice Committed ABI copies that the Rust crates read at compile
@@ -87,7 +91,7 @@ library LibCopyArtifacts {
         string[] memory cmd = new string[](3);
         cmd[0] = "jq";
         cmd[1] = "{abi, bytecode: {object: .bytecode.object}, deployedBytecode: {object: .deployedBytecode.object}}";
-        cmd[2] = livePath(contractName);
+        cmd[2] = livePath(vm, contractName);
         return vm.ffi(cmd);
     }
 }
