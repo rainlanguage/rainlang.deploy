@@ -2,7 +2,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {DeployCandidate, DeployDependency, DeploySuite, RainDeploySuitesBase} from "./RainDeploySuitesBase.sol";
+import {
+    DeployCandidate,
+    DeployDependency,
+    DeployMechanism,
+    DeploySuite,
+    RainDeploySuitesBase
+} from "./RainDeploySuitesBase.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {
@@ -110,7 +116,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedBytecodeHash: LibInterpreterDeploy.PARSER_DEPLOYED_CODEHASH,
                 storedRuntimeCode: PARSER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangParser.sol:RainlangParser",
-                dependencies: noDependencies()
+                dependencies: noDependencies(),
+                mechanism: DeployMechanism.Zoltu,
+                mechanismData: ""
             }),
             unanchorableReason: ""
         });
@@ -130,7 +138,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedBytecodeHash: LibInterpreterDeploy.STORE_DEPLOYED_CODEHASH,
                 storedRuntimeCode: STORE_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
-                dependencies: noDependencies()
+                dependencies: noDependencies(),
+                mechanism: DeployMechanism.Zoltu,
+                mechanismData: ""
             }),
             unanchorableReason: ""
         });
@@ -161,7 +171,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedBytecodeHash: LibInterpreterDeploy.INTERPRETER_DEPLOYED_CODEHASH,
                 storedRuntimeCode: INTERPRETER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
-                dependencies: deps
+                dependencies: deps,
+                mechanism: DeployMechanism.Zoltu,
+                mechanismData: ""
             }),
             unanchorableReason: ""
         });
@@ -193,7 +205,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedBytecodeHash: LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_CODEHASH,
                 storedRuntimeCode: EXPRESSION_DEPLOYER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangExpressionDeployer.sol:RainlangExpressionDeployer",
-                dependencies: deps
+                dependencies: deps,
+                mechanism: DeployMechanism.Zoltu,
+                mechanismData: ""
             }),
             unanchorableReason: ""
         });
@@ -236,7 +250,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedBytecodeHash: LibInterpreterDeploy.RAINLANG_DEPLOYED_CODEHASH,
                 storedRuntimeCode: RAINLANG_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/Rainlang.sol:Rainlang",
-                dependencies: deps
+                dependencies: deps,
+                mechanism: DeployMechanism.Zoltu,
+                mechanismData: ""
             }),
             unanchorableReason: ""
         });
