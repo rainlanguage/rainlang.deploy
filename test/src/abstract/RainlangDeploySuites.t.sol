@@ -57,7 +57,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// `UnknownDeploymentSuite` after the job has already started and read the
     /// deploy key. Matched both ways because either half alone goes green on
     /// the other's omission.
-    function testCandidateKeysAreExactlyTheDispatchChoices() external pure {
+    function testCandidateKeysAreExactlyTheDispatchChoices() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         string[] memory choices = dispatchChoices();
 
@@ -115,7 +115,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// any of them — so a zero that reached the list would block that suite on
     /// every chain, and only at deploy time. A repeat is a second address
     /// meant to be there that is not.
-    function testDependenciesAreNonZeroAndUnique() external pure {
+    function testDependenciesAreNonZeroAndUnique() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
             DeployDependency[] memory deps = candidates[i].snapshot.dependencies;
@@ -147,7 +147,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// each name three or four siblings by hand, and a sibling added to a
     /// constructor but not to the list is a deployment that lands on a chain
     /// where the thing it calls is not there yet.
-    function testCandidatesDependOnTheSiblingsTheyReach() external pure {
+    function testCandidatesDependOnTheSiblingsTheyReach() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
             for (uint256 j = 0; j < candidates.length; j++) {
@@ -189,7 +189,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// a dependency it does not embed — a constructor argument, an address read
     /// from storage — is the case that fails this, and this is where the
     /// exemption gets written down rather than the lists quietly growing again.
-    function testCandidatesReachEveryDependencyTheyDeclare() external pure {
+    function testCandidatesReachEveryDependencyTheyDeclare() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
             DeployDependency[] memory deps = candidates[i].snapshot.dependencies;
@@ -235,7 +235,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// the interpreter would go green, the broadcast gate would stop asking for
     /// it, and the ERC20 opcodes would revert on the first chain that does not
     /// carry it.
-    function testCandidatesDependOnTheExternalsTheyReach() external pure {
+    function testCandidatesDependOnTheExternalsTheyReach() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         address[] memory externals = externalDeployments();
         for (uint256 i = 0; i < candidates.length; i++) {
@@ -258,7 +258,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// PROPERTY: every declared dependency's `runtimeCode` is the code that is
     /// deployed at its address — a sibling's recorded runtime code, or the code
     /// hash the TOFU or DecimalFloat package pins for its singleton.
-    function testDependencyRuntimeCodeMatchesItsAddress() external pure {
+    function testDependencyRuntimeCodeMatchesItsAddress() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
             DeployDependency[] memory deps = candidates[i].snapshot.dependencies;
@@ -286,7 +286,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     }
 
     /// PROPERTY: every candidate's runtime code fits EIP-170.
-    function testCandidateRuntimeCodeFitsEip170() external pure {
+    function testCandidateRuntimeCodeFitsEip170() external view {
         DeployCandidate[] memory candidates = checkedCandidateSuites();
         for (uint256 i = 0; i < candidates.length; i++) {
             assertLe(
