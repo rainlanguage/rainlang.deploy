@@ -70,7 +70,7 @@ gas_limit = "18446744073709551615"
 [dependencies]
 forge-std = "1.17.0"
 "@openzeppelin-contracts" = "5.7.0"
-"rainlang" = { version = "0.2.13", git = "https://github.com/rainlanguage/rainlang.git", rev = "c5e1fd5c5a5766f198a13a2a2070dce58d1c0c36" }
+"rainlang" = "0.2.14"
 rain-deploy = "0.1.18"
 "rain-extrospection" = "0.1.14"
 "rain-intorastring" = "0.1.4"

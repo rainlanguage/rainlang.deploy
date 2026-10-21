@@ -119,9 +119,10 @@ integrity = "68fe11e0be91a84748e0055d5350ca05a75c309552234832eb748a3766b94028"
 
 [[dependencies]]
 name = "rainlang"
-version = "0.2.13"
-git = "https://github.com/rainlanguage/rainlang.git"
-rev = "c5e1fd5c5a5766f198a13a2a2070dce58d1c0c36"
+version = "0.2.14"
+url = "https://soldeer-revisions.s3.amazonaws.com/rainlang/0_2_14_21-10-2026_09:44:00_rainlang.zip"
+checksum = "dd4171d759f6fbecc4544a0381c746503be4876d8a0521781b2183a4a2072dde"
+integrity = "dd98718d94753504439a1c9a17f9053768854e59e22cf75ea6140edea5d78079"
 
 [[dependencies]]
 name = "rainlang-interface"
