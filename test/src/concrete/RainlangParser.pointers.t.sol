@@ -4,13 +4,13 @@ pragma solidity =0.8.25;
 
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.14/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.15/src/abstract/BaseRainlangParser.sol";
 import {
     OPERAND_HANDLER_FUNCTION_POINTERS,
     LITERAL_PARSER_FUNCTION_POINTERS,
     PARSE_META
 } from "../../../src/generated/RainlangParserPointers.sol";
-import {LibAllStandardOps, AuthoringMetaV2} from "rainlang-0.2.14/src/lib/op/LibAllStandardOps.sol";
+import {LibAllStandardOps, AuthoringMetaV2} from "rainlang-0.2.15/src/lib/op/LibAllStandardOps.sol";
 import {LibGenParseMeta} from "rainlang-interface-0.2.13/src/lib/codegen/LibGenParseMeta.sol";
 
 contract RainlangParserPointersTest is Test {
