@@ -12,7 +12,7 @@ import {
 import {
     DEPLOYED_ADDRESS as DECIMAL_FLOAT_DEPLOYED_ADDRESS,
     RUNTIME_CODE as DECIMAL_FLOAT_RUNTIME_CODE
-} from "rain-math-float-deploy-0.1.4/src/generated/candidate/DecimalFloat.sol";
+} from "rain-math-float-deploy-0.1.5/src/generated/0_1_5/DecimalFloat.sol";
 import {
     CREATION_CODE as PARSER_CREATION_CODE_CANDIDATE,
     RUNTIME_CODE as PARSER_RUNTIME_CODE_CANDIDATE

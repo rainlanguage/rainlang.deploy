@@ -70,7 +70,7 @@ gas_limit = "18446744073709551615"
 [dependencies]
 forge-std = "1.17.0"
 "@openzeppelin-contracts" = "5.7.0"
-"rainlang" = { version = "0.2.13", git = "https://github.com/rainlanguage/rainlang.git", rev = "2e92479be5305a92973eb7208d4a8a598cee3de6" }
+"rainlang" = { version = "0.2.13", git = "https://github.com/rainlanguage/rainlang.git", rev = "c5e1fd5c5a5766f198a13a2a2070dce58d1c0c36" }
 rain-deploy = "0.1.18"
 "rain-extrospection" = "0.1.14"
 "rain-intorastring" = "0.1.4"
@@ -79,7 +79,7 @@ rain-deploy = "0.1.18"
 "rain-lib-typecast" = "0.1.4"
 "rain-math-binary" = "0.1.4"
 "rain-math-float" = "0.3.10"
-"rain-math-float-deploy" = { version = "0.1.4", git = "https://github.com/rainlanguage/rain.math.float.deploy.git", rev = "9ff057239879342bd8f5ae66d13ec1f6778a5150" }
+"rain-math-float-deploy" = "0.1.5"
 "rain-metadata" = "0.1.43"
 rain-sol-codegen = "0.1.39"
 "rain-solmem" = "0.1.28"
