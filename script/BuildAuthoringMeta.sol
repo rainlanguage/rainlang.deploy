@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {Script} from "forge-std-1.17.0/src/Script.sol";
-import {LibAllStandardOps} from "rainlang-0.2.15/src/lib/op/LibAllStandardOps.sol";
+import {LibAllStandardOps} from "rainlang-0.2.16/src/lib/op/LibAllStandardOps.sol";
 
 /// @title BuildAuthoringMeta
 /// @notice Forge script that writes raw ABI-encoded AuthoringMeta bytes to
