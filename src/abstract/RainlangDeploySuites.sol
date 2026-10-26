@@ -8,7 +8,7 @@ import {
     DeployMechanism,
     DeploySuite,
     RainDeploySuitesBase
-} from "./RainDeploySuitesBase.sol";
+} from "rain-deploy-0.1.22/src/abstract/RainDeploySuitesBase.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {

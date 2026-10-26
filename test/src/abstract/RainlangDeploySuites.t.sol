@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {Test} from "forge-std-1.17.0/src/Test.sol";
-import {DeployCandidate, DeployDependency} from "../../../src/abstract/RainDeploySuitesBase.sol";
+import {DeployCandidate, DeployDependency} from "rain-deploy-0.1.22/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.4/src/lib/LibTOFUTokenDecimals.sol";
 import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.7/src/lib/deploy/LibDecimalFloatDeploy.sol";
