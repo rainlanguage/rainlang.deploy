@@ -27,14 +27,14 @@ evm_version = "cancun"
 optimizer = true
 optimizer_runs = 1000000
 
-# EIP-170: at 1e6 runs RainlangInterpreter is 25,027 B and RainlangParser
-# 24,610 B. 65,000 is the highest measured count keeping the interpreter at
-# least 256 B under the limit (24,007 B; 25,027 B at 70,000). Changing it moves
-# both Zoltu addresses.
-additional_compiler_profiles = [{ name = "eip170", optimizer_runs = 65000 }]
+# EIP-170: RainlangInterpreter and RainlangParser share one run count because
+# tests and scripts import both. 18,500 is the highest measured count keeping
+# the interpreter at least 256 B under the limit (24,044 B; 24,604 B at 18,750,
+# 24,976 B at 30,000-65,000). Changing it moves both Zoltu addresses.
+additional_compiler_profiles = [{ name = "eip170", optimizer_runs = 18500 }]
 compilation_restrictions = [
-  { paths = "src/concrete/RainlangInterpreter.sol", min_optimizer_runs = 65000, max_optimizer_runs = 65000 },
-  { paths = "src/concrete/RainlangParser.sol", min_optimizer_runs = 65000, max_optimizer_runs = 65000 },
+  { paths = "src/concrete/RainlangInterpreter.sol", min_optimizer_runs = 18500, max_optimizer_runs = 18500 },
+  { paths = "src/concrete/RainlangParser.sol", min_optimizer_runs = 18500, max_optimizer_runs = 18500 },
 ]
 
 ffi = true
