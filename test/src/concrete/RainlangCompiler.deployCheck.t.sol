@@ -4,17 +4,17 @@ pragma solidity =0.8.25;
 
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 
-import {RainlangExpressionDeployer} from "../../../src/concrete/RainlangExpressionDeployer.sol";
+import {RainlangCompiler} from "../../../src/concrete/RainlangCompiler.sol";
 import {RainlangStore} from "../../../src/concrete/RainlangStore.sol";
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
 import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";
 
-/// @title RainlangExpressionDeployerDeployCheckTest
-/// @notice Test that the RainlangExpressionDeployer deploy check reverts if the
+/// @title RainlangCompilerDeployCheckTest
+/// @notice Test that the RainlangCompiler deploy check reverts if the
 /// passed config does not match expectations.
-contract RainlangExpressionDeployerDeployCheckTest is Test {
-    /// Test the deployer can deploy if everything is valid.
-    function testRainlangExpressionDeployerDeployNoEIP1820() external {
-        new RainlangExpressionDeployer();
+contract RainlangCompilerDeployCheckTest is Test {
+    /// Test the compiler can deploy if everything is valid.
+    function testRainlangCompilerDeployNoEIP1820() external {
+        new RainlangCompiler();
     }
 }

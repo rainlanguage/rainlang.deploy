@@ -10,12 +10,12 @@ on:
           - parser
           - store
           - interpreter
-          - expression-deployer
+          - compiler
           - rainlang
           - parser@0_1_9
           - store@0_1_9
           - interpreter@0_1_9
-          - expression-deployer@0_1_9
+          - compiler@0_1_9
           - rainlang@0_1_9
       verify:
         description: >-

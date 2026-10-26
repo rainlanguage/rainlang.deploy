@@ -7,7 +7,7 @@ import {LibInterpreterDeploy} from "../../../../src/lib/deploy/LibInterpreterDep
 import {RainlangParser} from "../../../../src/concrete/RainlangParser.sol";
 import {RainlangStore} from "../../../../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../../../../src/concrete/RainlangInterpreter.sol";
-import {RainlangExpressionDeployer} from "../../../../src/concrete/RainlangExpressionDeployer.sol";
+import {RainlangCompiler} from "../../../../src/concrete/RainlangCompiler.sol";
 import {Rainlang} from "../../../../src/concrete/Rainlang.sol";
 import {LibExtrospectBytecode} from "rain-extrospection-0.1.16/src/lib/LibExtrospectBytecode.sol";
 import {LibExtrospectMetamorphic} from "rain-extrospection-0.1.16/src/lib/LibExtrospectMetamorphic.sol";
@@ -56,12 +56,12 @@ contract LibInterpreterDeployTest is Test {
         );
     }
 
-    /// ExpressionDeployer bytecode MUST NOT contain Solidity CBOR metadata.
-    function testNoCborMetadataExpressionDeployer() external {
-        RainlangExpressionDeployer expressionDeployer = new RainlangExpressionDeployer();
+    /// Compiler bytecode MUST NOT contain Solidity CBOR metadata.
+    function testNoCborMetadataCompiler() external {
+        RainlangCompiler compiler = new RainlangCompiler();
         assertFalse(
-            LibExtrospectBytecode.tryTrimSolidityCBORMetadata(address(expressionDeployer).code),
-            "ExpressionDeployer bytecode contains CBOR metadata"
+            LibExtrospectBytecode.tryTrimSolidityCBORMetadata(address(compiler).code),
+            "Compiler bytecode contains CBOR metadata"
         );
     }
 
@@ -92,11 +92,11 @@ contract LibInterpreterDeployTest is Test {
         LibExtrospectMetamorphic.checkNotMetamorphic(address(interpreter).code);
     }
 
-    /// ExpressionDeployer bytecode MUST NOT contain reachable metamorphic risk
+    /// Compiler bytecode MUST NOT contain reachable metamorphic risk
     /// opcodes.
-    function testNotMetamorphicExpressionDeployer() external {
-        RainlangExpressionDeployer expressionDeployer = new RainlangExpressionDeployer();
-        LibExtrospectMetamorphic.checkNotMetamorphic(address(expressionDeployer).code);
+    function testNotMetamorphicCompiler() external {
+        RainlangCompiler compiler = new RainlangCompiler();
+        LibExtrospectMetamorphic.checkNotMetamorphic(address(compiler).code);
     }
 
     /// Rainlang bytecode MUST NOT contain reachable metamorphic risk opcodes.
@@ -117,8 +117,7 @@ contract LibInterpreterDeployTest is Test {
             LibInterpreterDeploy.INTERPRETER_DEPLOYED_CODEHASH
         );
         assertEq(
-            LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS.codehash,
-            LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_CODEHASH
+            LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS.codehash, LibInterpreterDeploy.COMPILER_DEPLOYED_CODEHASH
         );
         assertEq(
             LibInterpreterDeploy.RAINLANG_DEPLOYED_ADDRESS.codehash, LibInterpreterDeploy.RAINLANG_DEPLOYED_CODEHASH
@@ -138,8 +137,7 @@ contract LibInterpreterDeployTest is Test {
             LibInterpreterDeploy.INTERPRETER_DEPLOYED_CODEHASH
         );
         assertEq(
-            LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS.codehash,
-            LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_CODEHASH
+            LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS.codehash, LibInterpreterDeploy.COMPILER_DEPLOYED_CODEHASH
         );
         assertEq(
             LibInterpreterDeploy.RAINLANG_DEPLOYED_ADDRESS.codehash, LibInterpreterDeploy.RAINLANG_DEPLOYED_CODEHASH

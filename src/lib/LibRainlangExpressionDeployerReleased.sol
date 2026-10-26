@@ -36,12 +36,12 @@ library LibRainlangExpressionDeployerReleased {
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
         DeploySuite[] memory suites = new DeploySuite[](1);
         suites[0] = DeploySuite({
-            suite: "expression-deployer@0_1_9",
+            suite: "compiler@0_1_9",
             creationCode: RainlangExpressionDeployer_0_1_9_CREATION_CODE,
             storedDeployedAddress: RainlangExpressionDeployer_0_1_9_DEPLOYED_ADDRESS,
             storedBytecodeHash: RainlangExpressionDeployer_0_1_9_BYTECODE_HASH,
             storedRuntimeCode: RainlangExpressionDeployer_0_1_9_RUNTIME_CODE,
-            artifactPath: "src/concrete/RainlangExpressionDeployer.sol:RainlangExpressionDeployer",
+            artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
             dependencies: abi.decode(RainlangExpressionDeployer_0_1_9_DEPENDENCIES, (DeployDependency[])),
             mechanism: DeployMechanism.Zoltu,
             mechanismData: ""

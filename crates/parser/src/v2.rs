@@ -110,21 +110,21 @@ pub trait Parser2 {
     }
 }
 
-/// Client-side wrapper around a deployer address that implements [`Parser2`]
-/// by making read calls to the on-chain deployer contract (which implements
+/// Client-side wrapper around a compiler address that implements [`Parser2`]
+/// by making read calls to the on-chain compiler contract (which implements
 /// `IParserV2`).
 ///
-/// The deployer address is typically discovered from Rainlang.
+/// The compiler address is typically discovered from Rainlang.
 #[derive(Clone, Default)]
 pub struct ParserV2 {
-    /// The address of the expression deployer (implements `IParserV2`).
-    pub deployer_address: Address,
+    /// The address of the compiler (implements `IParserV2`).
+    pub compiler_address: Address,
 }
 
 impl From<DISPaiR> for ParserV2 {
     fn from(val: DISPaiR) -> Self {
         Self {
-            deployer_address: val.deployer,
+            compiler_address: val.compiler,
         }
     }
 }
@@ -132,15 +132,15 @@ impl From<DISPaiR> for ParserV2 {
 impl From<Address> for ParserV2 {
     fn from(val: Address) -> Self {
         Self {
-            deployer_address: val,
+            compiler_address: val,
         }
     }
 }
 
 impl ParserV2 {
-    /// Creates a new `ParserV2` for the given deployer address.
-    pub fn new(deployer_address: Address) -> Self {
-        Self { deployer_address }
+    /// Creates a new `ParserV2` for the given compiler address.
+    pub fn new(compiler_address: Address) -> Self {
+        Self { compiler_address }
     }
 }
 
@@ -153,7 +153,7 @@ impl Parser2 for ParserV2 {
     ) -> Result<parse2Return, ParserError> {
         let bytecode = eth_call(
             provider,
-            self.deployer_address,
+            self.compiler_address,
             parse2Call { data: data.into() },
         )
         .await?;
@@ -167,7 +167,7 @@ impl Parser2 for ParserV2 {
     ) -> Result<parsePragma1Return, ParserError> {
         let pragma = eth_call(
             provider,
-            self.deployer_address,
+            self.compiler_address,
             parsePragma1Call { data: data.into() },
         )
         .await?;
@@ -184,7 +184,7 @@ impl Parser2 for ParserV2 {
     ) -> Result<parse2Return, ParserError> {
         let bytecode = eth_call(
             provider,
-            self.deployer_address,
+            self.compiler_address,
             parse2Call { data: data.into() },
         )
         .await?;
@@ -198,7 +198,7 @@ impl Parser2 for ParserV2 {
     ) -> Result<parsePragma1Return, ParserError> {
         let pragma = eth_call(
             provider,
-            self.deployer_address,
+            self.compiler_address,
             parsePragma1Call { data: data.into() },
         )
         .await?;
@@ -217,10 +217,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_from_dispair() {
-        let deployer_address = Address::repeat_byte(0x4);
+        let compiler_address = Address::repeat_byte(0x4);
 
         let dispair = DISPaiR {
-            deployer: deployer_address,
+            compiler: compiler_address,
             interpreter: Address::repeat_byte(0x2),
             store: Address::repeat_byte(0x3),
             parser: Address::repeat_byte(0x1),
@@ -228,8 +228,8 @@ mod tests {
 
         let parser: ParserV2 = dispair.clone().into();
 
-        assert_eq!(parser.deployer_address, dispair.deployer);
-        assert_eq!(parser.deployer_address, deployer_address);
+        assert_eq!(parser.compiler_address, dispair.compiler);
+        assert_eq!(parser.compiler_address, compiler_address);
     }
 
     #[tokio::test]
@@ -246,7 +246,7 @@ mod tests {
 
         let provider = ProviderBuilder::new().connect_mocked_client(asserter);
         let parser = ParserV2 {
-            deployer_address: Address::repeat_byte(0x1),
+            compiler_address: Address::repeat_byte(0x1),
         };
 
         let result = parser.parse_text("my rainlang", &provider).await.unwrap();
@@ -270,7 +270,7 @@ mod tests {
 
         let provider = ProviderBuilder::new().connect_mocked_client(asserter);
         let parser = ParserV2 {
-            deployer_address: Address::repeat_byte(0x1),
+            compiler_address: Address::repeat_byte(0x1),
         };
 
         let result = parser.parse_text(rainlang, &provider).await.unwrap();
@@ -299,7 +299,7 @@ mod tests {
 
         let provider = ProviderBuilder::new().connect_mocked_client(asserter);
         let parser = ParserV2 {
-            deployer_address: Address::repeat_byte(0x1),
+            compiler_address: Address::repeat_byte(0x1),
         };
 
         let result = parser.parse_pragma_text(rainlang, &provider).await.unwrap();

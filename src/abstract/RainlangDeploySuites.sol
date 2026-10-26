@@ -32,9 +32,9 @@ import {
     RUNTIME_CODE as INTERPRETER_RUNTIME_CODE_CANDIDATE
 } from "../generated/candidate/RainlangInterpreter.sol";
 import {
-    CREATION_CODE as EXPRESSION_DEPLOYER_CREATION_CODE_CANDIDATE,
-    RUNTIME_CODE as EXPRESSION_DEPLOYER_RUNTIME_CODE_CANDIDATE
-} from "../generated/candidate/RainlangExpressionDeployer.sol";
+    CREATION_CODE as COMPILER_CREATION_CODE_CANDIDATE,
+    RUNTIME_CODE as COMPILER_RUNTIME_CODE_CANDIDATE
+} from "../generated/candidate/RainlangCompiler.sol";
 import {
     CREATION_CODE as RAINLANG_CREATION_CODE_CANDIDATE,
     RUNTIME_CODE as RAINLANG_RUNTIME_CODE_CANDIDATE
@@ -83,7 +83,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         candidates[0] = parserCandidate();
         candidates[1] = storeCandidate();
         candidates[2] = interpreterCandidate();
-        candidates[3] = expressionDeployerCandidate();
+        candidates[3] = compilerCandidate();
         candidates[4] = rainlangCandidate();
         return candidates;
     }
@@ -179,7 +179,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
     }
 
-    /// This repo's rolling `RainlangExpressionDeployer` candidate.
+    /// This repo's rolling `RainlangCompiler` candidate.
     ///
     /// Dependencies: the parser, and only the parser. Both `parse2` and
     /// `parsePragma1` call it at its deterministic address, so it must already
@@ -192,19 +192,19 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// `LibAllStandardOps.integrityFunctionPointers()`, the integrity
     /// functions, not the `run` implementations that reach it.
     /// @return The candidate.
-    function expressionDeployerCandidate() internal pure returns (DeployCandidate memory) {
+    function compilerCandidate() internal pure returns (DeployCandidate memory) {
         DeployDependency[] memory deps = new DeployDependency[](1);
         deps[0] = DeployDependency({
             deployedAddress: LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS, runtimeCode: PARSER_RUNTIME_CODE_CANDIDATE
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "expression-deployer",
-                creationCode: EXPRESSION_DEPLOYER_CREATION_CODE_CANDIDATE,
-                storedDeployedAddress: LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS,
-                storedBytecodeHash: LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_CODEHASH,
-                storedRuntimeCode: EXPRESSION_DEPLOYER_RUNTIME_CODE_CANDIDATE,
-                artifactPath: "src/concrete/RainlangExpressionDeployer.sol:RainlangExpressionDeployer",
+                suite: "compiler",
+                creationCode: COMPILER_CREATION_CODE_CANDIDATE,
+                storedDeployedAddress: LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS,
+                storedBytecodeHash: LibInterpreterDeploy.COMPILER_DEPLOYED_CODEHASH,
+                storedRuntimeCode: COMPILER_RUNTIME_CODE_CANDIDATE,
+                artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
                 dependencies: deps,
                 mechanism: DeployMechanism.Zoltu,
                 mechanismData: ""
@@ -239,8 +239,8 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
             runtimeCode: INTERPRETER_RUNTIME_CODE_CANDIDATE
         });
         deps[3] = DeployDependency({
-            deployedAddress: LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS,
-            runtimeCode: EXPRESSION_DEPLOYER_RUNTIME_CODE_CANDIDATE
+            deployedAddress: LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS,
+            runtimeCode: COMPILER_RUNTIME_CODE_CANDIDATE
         });
         return DeployCandidate({
             snapshot: DeploySuite({

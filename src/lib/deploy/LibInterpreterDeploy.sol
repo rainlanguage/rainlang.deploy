@@ -20,10 +20,10 @@ import {
     RUNTIME_CODE as INTERPRETER_RUNTIME_CODE
 } from "../../generated/candidate/RainlangInterpreter.sol";
 import {
-    BYTECODE_HASH as EXPRESSION_DEPLOYER_HASH,
-    DEPLOYED_ADDRESS as EXPRESSION_DEPLOYER_ADDR,
-    RUNTIME_CODE as EXPRESSION_DEPLOYER_RUNTIME_CODE
-} from "../../generated/candidate/RainlangExpressionDeployer.sol";
+    BYTECODE_HASH as COMPILER_HASH,
+    DEPLOYED_ADDRESS as COMPILER_ADDR,
+    RUNTIME_CODE as COMPILER_RUNTIME_CODE
+} from "../../generated/candidate/RainlangCompiler.sol";
 import {
     BYTECODE_HASH as RAINLANG_HASH,
     DEPLOYED_ADDRESS as RAINLANG_ADDR,
@@ -67,15 +67,15 @@ library LibInterpreterDeploy {
     /// than just checking the address.
     bytes32 constant INTERPRETER_DEPLOYED_CODEHASH = INTERPRETER_HASH;
 
-    /// The address of the `RainlangExpressionDeployer` contract when
+    /// The address of the `RainlangCompiler` contract when
     /// deployed with the rain standard zoltu deployer.
-    address constant EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS = EXPRESSION_DEPLOYER_ADDR;
+    address constant COMPILER_DEPLOYED_ADDRESS = COMPILER_ADDR;
 
-    /// The code hash of the `RainlangExpressionDeployer` contract when
+    /// The code hash of the `RainlangCompiler` contract when
     /// deployed with the rain standard zoltu deployer. This can be used to
     /// verify that the deployed contract has the expected bytecode, which
     /// provides stronger guarantees than just checking the address.
-    bytes32 constant EXPRESSION_DEPLOYER_DEPLOYED_CODEHASH = EXPRESSION_DEPLOYER_HASH;
+    bytes32 constant COMPILER_DEPLOYED_CODEHASH = COMPILER_HASH;
 
     /// The address of the `Rainlang` contract when deployed with the rain
     /// standard zoltu deployer.
@@ -88,7 +88,7 @@ library LibInterpreterDeploy {
     bytes32 constant RAINLANG_DEPLOYED_CODEHASH = RAINLANG_HASH;
 
     /// @notice Etches the runtime bytecode of the parser, store, interpreter,
-    /// expression deployer, and Rainlang at their expected
+    /// compiler, and Rainlang at their expected
     /// deterministic addresses. Skips any contract whose codehash already
     /// matches.
     /// @param vm The Forge `Vm` cheatcode interface.
@@ -102,8 +102,8 @@ library LibInterpreterDeploy {
         if (INTERPRETER_DEPLOYED_CODEHASH != INTERPRETER_DEPLOYED_ADDRESS.codehash) {
             vm.etch(INTERPRETER_DEPLOYED_ADDRESS, INTERPRETER_RUNTIME_CODE);
         }
-        if (EXPRESSION_DEPLOYER_DEPLOYED_CODEHASH != EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS.codehash) {
-            vm.etch(EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS, EXPRESSION_DEPLOYER_RUNTIME_CODE);
+        if (COMPILER_DEPLOYED_CODEHASH != COMPILER_DEPLOYED_ADDRESS.codehash) {
+            vm.etch(COMPILER_DEPLOYED_ADDRESS, COMPILER_RUNTIME_CODE);
         }
         if (RAINLANG_DEPLOYED_CODEHASH != RAINLANG_DEPLOYED_ADDRESS.codehash) {
             vm.etch(RAINLANG_DEPLOYED_ADDRESS, RAINLANG_RUNTIME_CODE);

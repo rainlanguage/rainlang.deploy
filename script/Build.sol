@@ -11,11 +11,11 @@ import {LibGenParseMeta} from "rainlang-interface-0.2.13/src/lib/codegen/LibGenP
 import {DeployCandidate} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.19/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.26/src/abstract/BaseRainlangParser.sol";
 import {RainlangStore} from "../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../src/concrete/RainlangInterpreter.sol";
-import {RainlangExpressionDeployer} from "../src/concrete/RainlangExpressionDeployer.sol";
-import {LibAllStandardOps} from "rainlang-0.2.19/src/lib/op/LibAllStandardOps.sol";
+import {RainlangCompiler} from "../src/concrete/RainlangCompiler.sol";
+import {LibAllStandardOps} from "rainlang-0.2.26/src/lib/op/LibAllStandardOps.sol";
 
 /// One contract's generated snapshot and the released-suites lib emitted from
 /// its record.
@@ -45,7 +45,7 @@ struct GeneratedContract {
 /// helper are a published consumer API.
 contract Build is BuildScript, RainlangDeploySuites {
     /// Every contract this repo generates deploy pins for, in deploy order:
-    /// the expression deployer calls the parser at its deterministic address,
+    /// the compiler calls the parser at its deterministic address,
     /// and `Rainlang` names all four of the others at theirs.
     /// @return The generated contracts.
     function generatedContracts() internal pure returns (GeneratedContract[] memory) {
@@ -53,8 +53,7 @@ contract Build is BuildScript, RainlangDeploySuites {
         contracts[0] = GeneratedContract({contractName: "RainlangParser", candidate: parserCandidate()});
         contracts[1] = GeneratedContract({contractName: "RainlangStore", candidate: storeCandidate()});
         contracts[2] = GeneratedContract({contractName: "RainlangInterpreter", candidate: interpreterCandidate()});
-        contracts[3] =
-            GeneratedContract({contractName: "RainlangExpressionDeployer", candidate: expressionDeployerCandidate()});
+        contracts[3] = GeneratedContract({contractName: "RainlangCompiler", candidate: compilerCandidate()});
         contracts[4] = GeneratedContract({contractName: "Rainlang", candidate: rainlangCandidate()});
         return contracts;
     }
@@ -71,11 +70,28 @@ contract Build is BuildScript, RainlangDeploySuites {
         return names;
     }
 
+    /// `generatedContracts()` with `RainlangExpressionDeployer`, the compiler's
+    /// record name in releases frozen before its rename, ahead of the compiler.
+    /// @return The contracts that get a released-suites lib, in deploy order.
+    function releasedContracts() internal pure returns (GeneratedContract[] memory) {
+        GeneratedContract[] memory generated = generatedContracts();
+        GeneratedContract[] memory contracts = new GeneratedContract[](generated.length + 1);
+        for (uint256 i = 0; i < 3; i++) {
+            contracts[i] = generated[i];
+        }
+        contracts[3] = GeneratedContract({contractName: "RainlangExpressionDeployer", candidate: compilerCandidate()});
+        for (uint256 i = 3; i < generated.length; i++) {
+            contracts[i + 1] = generated[i];
+        }
+        return contracts;
+    }
+
     /// @inheritdoc BuildScript
     /// @dev Every released-suites lib and the aggregate over them. No alias
     /// libs: `LibInterpreterDeploy` is hand-written.
     function regenerateLibs() internal override {
-        GeneratedContract[] memory contracts = generatedContracts();
+        GeneratedContract[] memory contracts = releasedContracts();
+        string[] memory names = new string[](contracts.length);
         for (uint256 i = 0; i < contracts.length; i++) {
             LibRainDeploySnapshot.writeReleasedSuitesLib(
                 vm,
@@ -84,8 +100,9 @@ contract Build is BuildScript, RainlangDeploySuites {
                 contracts[i].contractName,
                 contracts[i].candidate.snapshot
             );
+            names[i] = contracts[i].contractName;
         }
-        LibRainDeploySnapshot.writeReleasedSuitesAggregate(vm, LibRainDeploySnapshot.LIB_DIR, snapshotContractNames());
+        LibRainDeploySnapshot.writeReleasedSuitesAggregate(vm, LibRainDeploySnapshot.LIB_DIR, names);
     }
 
     /// @inheritdoc BuildScript
@@ -104,7 +121,7 @@ contract Build is BuildScript, RainlangDeploySuites {
         buildRainlangParserPointers();
         buildRainlangStorePointers();
         buildRainlangInterpreterPointers();
-        buildRainlangExpressionDeployerPointers();
+        buildRainlangCompilerPointers();
     }
 
     /// The parser's non-deploy codegen: parse meta, operand handler pointers
@@ -161,19 +178,18 @@ contract Build is BuildScript, RainlangDeploySuites {
         );
     }
 
-    /// The expression deployer's non-deploy codegen: its described-by meta
+    /// The compiler's non-deploy codegen: its described-by meta
     /// hash and integrity function pointers.
-    function buildRainlangExpressionDeployerPointers() internal {
-        RainlangExpressionDeployer deployer =
-            RainlangExpressionDeployer(LibRainDeploy.zoltuAddress(type(RainlangExpressionDeployer).creationCode));
+    function buildRainlangCompilerPointers() internal {
+        RainlangCompiler compiler = RainlangCompiler(LibRainDeploy.zoltuAddress(type(RainlangCompiler).creationCode));
 
         LibFs.buildFileForContract(
             vm,
-            address(deployer),
-            "RainlangExpressionDeployerPointers",
+            address(compiler),
+            "RainlangCompilerPointers",
             string.concat(
-                LibCodeGen.describedByMetaHashConstantString(vm, "RainlangExpressionDeployer"),
-                LibCodeGen.integrityFunctionPointersConstantString(vm, deployer)
+                LibCodeGen.describedByMetaHashConstantString(vm, "RainlangCompiler"),
+                LibCodeGen.integrityFunctionPointersConstantString(vm, compiler)
             )
         );
     }

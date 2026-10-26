@@ -16,6 +16,8 @@ import {LibRainlangInterpreterReleased} from "./LibRainlangInterpreterReleased.s
 
 import {LibRainlangExpressionDeployerReleased} from "./LibRainlangExpressionDeployerReleased.sol";
 
+import {LibRainlangCompilerReleased} from "./LibRainlangCompilerReleased.sol";
+
 import {LibRainlangReleased} from "./LibRainlangReleased.sol";
 
 /// @title LibReleasedSuites
@@ -35,12 +37,13 @@ library LibReleasedSuites {
     /// Every released suite, in the order the build script lists them.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[][] memory released = new DeploySuite[][](5);
+        DeploySuite[][] memory released = new DeploySuite[][](6);
         released[0] = LibRainlangParserReleased.releasedSuites();
         released[1] = LibRainlangStoreReleased.releasedSuites();
         released[2] = LibRainlangInterpreterReleased.releasedSuites();
         released[3] = LibRainlangExpressionDeployerReleased.releasedSuites();
-        released[4] = LibRainlangReleased.releasedSuites();
+        released[4] = LibRainlangCompilerReleased.releasedSuites();
+        released[5] = LibRainlangReleased.releasedSuites();
         return LibDeploySuiteConcat.concat(released);
     }
 }

@@ -14,7 +14,7 @@ import {
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
 import {RainlangStore} from "../../../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";
-import {RainlangExpressionDeployer} from "../../../src/concrete/RainlangExpressionDeployer.sol";
+import {RainlangCompiler} from "../../../src/concrete/RainlangCompiler.sol";
 import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 
 contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployVerifyDeclaration {
@@ -23,7 +23,7 @@ contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployVerify
         if (key == keccak256("parser")) return type(RainlangParser).creationCode;
         if (key == keccak256("store")) return type(RainlangStore).creationCode;
         if (key == keccak256("interpreter")) return type(RainlangInterpreter).creationCode;
-        if (key == keccak256("expression-deployer")) return type(RainlangExpressionDeployer).creationCode;
+        if (key == keccak256("compiler")) return type(RainlangCompiler).creationCode;
         if (key == keccak256("rainlang")) return type(Rainlang).creationCode;
         revert(string.concat("no source for suite: ", suite));
     }
