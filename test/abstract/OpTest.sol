@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {OpTest as BaseOpTest} from "rainlang-0.2.26/test/abstract/OpTest.sol";
+import {OpTest as BaseOpTest} from "rainlang-0.2.27/test/abstract/OpTest.sol";
 import {
     RainlangCompilerDeploymentTest as BaseRainlangCompilerDeploymentTest
-} from "rainlang-0.2.26/test/abstract/RainlangCompilerDeploymentTest.sol";
-import {BaseRainlangStore} from "rainlang-0.2.26/src/abstract/BaseRainlangStore.sol";
-import {BaseRainlangParser} from "rainlang-0.2.26/src/abstract/BaseRainlangParser.sol";
-import {BaseRainlangInterpreter} from "rainlang-0.2.26/src/abstract/BaseRainlangInterpreter.sol";
-import {BaseRainlangCompiler} from "rainlang-0.2.26/src/abstract/BaseRainlangCompiler.sol";
+} from "rainlang-0.2.27/test/abstract/RainlangCompilerDeploymentTest.sol";
+import {BaseRainlangStore} from "rainlang-0.2.27/src/abstract/BaseRainlangStore.sol";
+import {BaseRainlangParser} from "rainlang-0.2.27/src/abstract/BaseRainlangParser.sol";
+import {BaseRainlangInterpreter} from "rainlang-0.2.27/src/abstract/BaseRainlangInterpreter.sol";
+import {BaseRainlangCompiler} from "rainlang-0.2.27/src/abstract/BaseRainlangCompiler.sol";
 import {RainlangCompilerDeploymentTest} from "./RainlangCompilerDeploymentTest.sol";
 
 /// @title OpTest
