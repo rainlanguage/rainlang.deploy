@@ -2,20 +2,20 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BuildScript} from "rain-deploy-0.1.22/src/abstract/BuildScript.sol";
-import {LibRainDeploySnapshot} from "rain-deploy-0.1.22/src/lib/LibRainDeploySnapshot.sol";
-import {LibRainDeploy} from "rain-deploy-0.1.22/src/lib/LibRainDeploy.sol";
+import {BuildScript} from "rain-deploy-0.1.25/src/abstract/BuildScript.sol";
+import {LibRainDeploySnapshot} from "rain-deploy-0.1.25/src/lib/LibRainDeploySnapshot.sol";
+import {LibRainDeploy} from "rain-deploy-0.1.25/src/lib/LibRainDeploy.sol";
 import {LibCodeGen} from "rain-sol-codegen-0.1.39/src/lib/LibCodeGen.sol";
 import {LibFs} from "rain-sol-codegen-0.1.39/src/lib/LibFs.sol";
 import {LibGenParseMeta} from "rainlang-interface-0.2.13/src/lib/codegen/LibGenParseMeta.sol";
 import {DeployCandidate} from "../src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.23/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.26/src/abstract/BaseRainlangParser.sol";
 import {RainlangStore} from "../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../src/concrete/RainlangInterpreter.sol";
 import {RainlangCompiler} from "../src/concrete/RainlangCompiler.sol";
-import {LibAllStandardOps} from "rainlang-0.2.23/src/lib/op/LibAllStandardOps.sol";
+import {LibAllStandardOps} from "rainlang-0.2.26/src/lib/op/LibAllStandardOps.sol";
 
 /// One contract's generated snapshot and the released-suites lib emitted from
 /// its record.
@@ -70,11 +70,28 @@ contract Build is BuildScript, RainlangDeploySuites {
         return names;
     }
 
+    /// `generatedContracts()` with `RainlangExpressionDeployer`, the compiler's
+    /// record name in releases frozen before its rename, ahead of the compiler.
+    /// @return The contracts that get a released-suites lib, in deploy order.
+    function releasedContracts() internal pure returns (GeneratedContract[] memory) {
+        GeneratedContract[] memory generated = generatedContracts();
+        GeneratedContract[] memory contracts = new GeneratedContract[](generated.length + 1);
+        for (uint256 i = 0; i < 3; i++) {
+            contracts[i] = generated[i];
+        }
+        contracts[3] = GeneratedContract({contractName: "RainlangExpressionDeployer", candidate: compilerCandidate()});
+        for (uint256 i = 3; i < generated.length; i++) {
+            contracts[i + 1] = generated[i];
+        }
+        return contracts;
+    }
+
     /// @inheritdoc BuildScript
     /// @dev Every released-suites lib and the aggregate over them. No alias
     /// libs: `LibInterpreterDeploy` is hand-written.
     function regenerateLibs() internal override {
-        GeneratedContract[] memory contracts = generatedContracts();
+        GeneratedContract[] memory contracts = releasedContracts();
+        string[] memory names = new string[](contracts.length);
         for (uint256 i = 0; i < contracts.length; i++) {
             LibRainDeploySnapshot.writeReleasedSuitesLib(
                 vm,
@@ -83,8 +100,9 @@ contract Build is BuildScript, RainlangDeploySuites {
                 contracts[i].contractName,
                 contracts[i].candidate.snapshot
             );
+            names[i] = contracts[i].contractName;
         }
-        LibRainDeploySnapshot.writeReleasedSuitesAggregate(vm, LibRainDeploySnapshot.LIB_DIR, snapshotContractNames());
+        LibRainDeploySnapshot.writeReleasedSuitesAggregate(vm, LibRainDeploySnapshot.LIB_DIR, names);
     }
 
     /// @inheritdoc BuildScript

@@ -70,9 +70,8 @@ gas_limit = "18446744073709551615"
 [dependencies]
 forge-std = "1.17.0"
 "@openzeppelin-contracts" = "5.7.0"
-# Git pin to https://github.com/rainlanguage/rainlang/pull/606 until it publishes.
-"rainlang" = { version = "0.2.23", git = "https://github.com/rainlanguage/rainlang.git", rev = "891bc9fb1f09d31515cfc1577a23eb3717ed84cf" }
-rain-deploy = "0.1.22"
+"rainlang" = "0.2.26"
+rain-deploy = "0.1.25"
 rain-factory = "0.2.5"
 "rain-extrospection" = "0.1.16"
 "rain-intorastring" = "0.1.4"
