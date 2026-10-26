@@ -59,6 +59,7 @@ fs_permissions = [
   { access = "write", path = "./deployments/latest/RainlangStore" },
   { access = "write", path = "./deployments/latest/RainlangInterpreter" },
   { access = "write", path = "./deployments/latest/RainlangExpressionDeployer" },
+  { access = "read", path = ".github/workflows/manual-sol-artifacts.yaml" },
 ]
 
 gas_limit = "18446744073709551615"
@@ -69,7 +70,7 @@ gas_limit = "18446744073709551615"
 forge-std = "1.17.0"
 "@openzeppelin-contracts" = "5.7.0"
 "rainlang" = "0.2.19"
-rain-deploy = "0.1.22"
+rain-deploy = "0.1.25"
 rain-factory = "0.2.5"
 "rain-extrospection" = "0.1.14"
 "rain-intorastring" = "0.1.4"
