@@ -41,7 +41,7 @@
                 -t cbor \
                 -e deflate \
                 -l none \
-                -o meta/RainlangExpressionDeployer.rain.meta \
+                -o meta/RainlangCompiler.rain.meta \
             '';
             additionalBuildInputs = rainix.sol-build-inputs.${system} ++ [ rain.defaultPackage.${system} ];
           };

@@ -15,7 +15,7 @@ library LibCopyArtifacts {
     function contracts() internal pure returns (string[] memory) {
         string[] memory names = new string[](11);
         names[0] = "Rainlang";
-        names[1] = "RainlangExpressionDeployer";
+        names[1] = "RainlangCompiler";
         names[2] = "RainlangInterpreter";
         names[3] = "RainlangParser";
         names[4] = "RainlangStore";

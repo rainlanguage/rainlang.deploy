@@ -2,29 +2,29 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {OpTest as BaseOpTest} from "rainlang-0.2.19/test/abstract/OpTest.sol";
+import {OpTest as BaseOpTest} from "rainlang-0.2.26/test/abstract/OpTest.sol";
 import {
-    RainlangExpressionDeployerDeploymentTest as BaseRainlangExpressionDeployerDeploymentTest
-} from "rainlang-0.2.19/test/abstract/RainlangExpressionDeployerDeploymentTest.sol";
-import {BaseRainlangStore} from "rainlang-0.2.19/src/abstract/BaseRainlangStore.sol";
-import {BaseRainlangParser} from "rainlang-0.2.19/src/abstract/BaseRainlangParser.sol";
-import {BaseRainlangInterpreter} from "rainlang-0.2.19/src/abstract/BaseRainlangInterpreter.sol";
-import {BaseRainlangExpressionDeployer} from "rainlang-0.2.19/src/abstract/BaseRainlangExpressionDeployer.sol";
-import {RainlangExpressionDeployerDeploymentTest} from "./RainlangExpressionDeployerDeploymentTest.sol";
+    RainlangCompilerDeploymentTest as BaseRainlangCompilerDeploymentTest
+} from "rainlang-0.2.26/test/abstract/RainlangCompilerDeploymentTest.sol";
+import {BaseRainlangStore} from "rainlang-0.2.26/src/abstract/BaseRainlangStore.sol";
+import {BaseRainlangParser} from "rainlang-0.2.26/src/abstract/BaseRainlangParser.sol";
+import {BaseRainlangInterpreter} from "rainlang-0.2.26/src/abstract/BaseRainlangInterpreter.sol";
+import {BaseRainlangCompiler} from "rainlang-0.2.26/src/abstract/BaseRainlangCompiler.sol";
+import {RainlangCompilerDeploymentTest} from "./RainlangCompilerDeploymentTest.sol";
 
 /// @title OpTest
 /// @notice The `rainlang` package's `OpTest` bound to the deployed Rainlang
-/// through `RainlangExpressionDeployerDeploymentTest`, for word and extern
+/// through `RainlangCompilerDeploymentTest`, for word and extern
 /// repos that test against the live parser, store, interpreter and expression
-/// deployer.
-abstract contract OpTest is BaseOpTest, RainlangExpressionDeployerDeploymentTest {
-    /// @inheritdoc RainlangExpressionDeployerDeploymentTest
+/// compiler.
+abstract contract OpTest is BaseOpTest, RainlangCompilerDeploymentTest {
+    /// @inheritdoc RainlangCompilerDeploymentTest
     function deployRainlang()
         internal
         virtual
-        override(BaseRainlangExpressionDeployerDeploymentTest, RainlangExpressionDeployerDeploymentTest)
-        returns (BaseRainlangParser, BaseRainlangStore, BaseRainlangInterpreter, BaseRainlangExpressionDeployer)
+        override(BaseRainlangCompilerDeploymentTest, RainlangCompilerDeploymentTest)
+        returns (BaseRainlangParser, BaseRainlangStore, BaseRainlangInterpreter, BaseRainlangCompiler)
     {
-        return RainlangExpressionDeployerDeploymentTest.deployRainlang();
+        return RainlangCompilerDeploymentTest.deployRainlang();
     }
 }

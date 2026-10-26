@@ -2,13 +2,13 @@
 
 The **deployment** half of
 [`rainlang`](https://github.com/rainlanguage/rainlang): the concrete
-`RainlangParser`, `RainlangStore`, `RainlangInterpreter`,
-`RainlangExpressionDeployer` and `Rainlang` contracts, the rolling
-`src/generated/candidate/` snapshots of their deterministic Zoltu deploy records
-(address, codehash, creation and runtime bytecode), the hand-written pin lib
-`src/lib/deploy/LibInterpreterDeploy.sol` over those records, the generated
-parse meta and function pointer tables the concretes bind, the deploy scripts +
-tests, and the Rust crates that bind the deployed contracts.
+`RainlangParser`, `RainlangStore`, `RainlangInterpreter`, `RainlangCompiler` and
+`Rainlang` contracts, the rolling `src/generated/candidate/` snapshots of their
+deterministic Zoltu deploy records (address, codehash, creation and runtime
+bytecode), the hand-written pin lib `src/lib/deploy/LibInterpreterDeploy.sol`
+over those records, the generated parse meta and function pointer tables the
+concretes bind, the deploy scripts + tests, and the Rust crates that bind the
+deployed contracts.
 
 The **library** half — the parser, eval loop, standard ops, integrity checks,
 the `BaseRainlang*` contracts the concretes extend and the extern / sub-parser
@@ -35,10 +35,9 @@ harness over the live contracts (`OpTest`, `LibInterpreterDeploy`) depend on
   candidate pins, plus `etchRainlang` for tests.
 - `src/lib/LibReleasedSuites.sol` (+ the per-contract `Lib*Released.sol`) — the
   generated record of every released suite. NEVER edit by hand.
-- `test/abstract/OpTest.sol`,
-  `test/abstract/RainlangExpressionDeployerDeploymentTest.sol` — the `rainlang`
-  package's test harness bound to the deployed contracts, for word and extern
-  repos.
+- `test/abstract/OpTest.sol`, `test/abstract/RainlangCompilerDeploymentTest.sol`
+  — the `rainlang` package's test harness bound to the deployed contracts, for
+  word and extern repos.
 - `script/Deploy.sol` — deploys one suite via the Zoltu deterministic deployer.
 - `crates/` — Rust bindings, dispair, parser, eval, cli and test fixtures over
   the deployed contracts' ABIs, copied from the forge artifacts by
@@ -58,10 +57,10 @@ Releases are manual `sol-v*` tags, never merges.
 
 The on-chain deploy comes first and is human-dispatched: the
 `Manual sol artifacts` workflow runs `script/Deploy.sol` once per suite, in
-order `parser`, `store`, `interpreter`, `expression-deployer`, `rainlang`,
-because the later suites embed the earlier ones' addresses. Where an address
-already holds its code (deterministic Zoltu), a deploy attests the existing code
-rather than deploying fresh.
+order `parser`, `store`, `interpreter`, `compiler`, `rainlang`, because the
+later suites embed the earlier ones' addresses. Where an address already holds
+its code (deterministic Zoltu), a deploy attests the existing code rather than
+deploying fresh.
 
 Then `RainlangDeployChainTest` verifies every suite is live on every supported
 network, a PR carries `cutRelease()`'s frozen `src/generated/<tag>/` and the

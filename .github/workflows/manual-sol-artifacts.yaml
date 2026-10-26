@@ -10,7 +10,7 @@ on:
           - parser
           - store
           - interpreter
-          - expression-deployer
+          - compiler
           - rainlang
       verify:
         description: >-

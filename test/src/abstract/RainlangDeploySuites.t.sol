@@ -10,7 +10,7 @@ import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.7/src/lib/deploy
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
 import {RainlangStore} from "../../../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";
-import {RainlangExpressionDeployer} from "../../../src/concrete/RainlangExpressionDeployer.sol";
+import {RainlangCompiler} from "../../../src/concrete/RainlangCompiler.sol";
 import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 
 /// @title RainlangDeploySuitesTest
@@ -44,7 +44,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
         choices[0] = "parser";
         choices[1] = "store";
         choices[2] = "interpreter";
-        choices[3] = "expression-deployer";
+        choices[3] = "compiler";
         choices[4] = "rainlang";
         return choices;
     }
@@ -143,7 +143,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
     /// candidate's address appear in this one's creation code" is decidable
     /// without leaving the declaration. It is exactly the condition that makes
     /// the other one a precondition of this one's broadcast, and the list is
-    /// hand-written per candidate — the expression deployer and `Rainlang`
+    /// hand-written per candidate — the compiler and `Rainlang`
     /// each name three or four siblings by hand, and a sibling added to a
     /// constructor but not to the list is a deployment that lands on a chain
     /// where the thing it calls is not there yet.
@@ -306,7 +306,7 @@ contract RainlangDeploySuitesTest is Test, RainlangDeploySuites {
         if (key == keccak256("parser")) return type(RainlangParser).creationCode;
         if (key == keccak256("store")) return type(RainlangStore).creationCode;
         if (key == keccak256("interpreter")) return type(RainlangInterpreter).creationCode;
-        if (key == keccak256("expression-deployer")) return type(RainlangExpressionDeployer).creationCode;
+        if (key == keccak256("compiler")) return type(RainlangCompiler).creationCode;
         if (key == keccak256("rainlang")) return type(Rainlang).creationCode;
         revert(string.concat("no source for suite: ", suite));
     }
