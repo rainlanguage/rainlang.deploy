@@ -4,9 +4,7 @@ use alloy::primitives::{Address, U256};
 use rainlang_bindings::IInterpreterStoreV3::FullyQualifiedNamespace;
 use rainlang_bindings::IInterpreterV4::{EvalV4, eval4Call};
 use rainlang_bindings::IParserV2::parse2Call;
-use rainlang_bindings::Rainlang::{
-    compilerCall, interpreterCall, storeCall,
-};
+use rainlang_bindings::Rainlang::{compilerCall, interpreterCall, storeCall};
 
 /// Arguments for evaluating a Rainlang string in a forked EVM context
 #[derive(Debug, Clone)]
@@ -82,12 +80,7 @@ impl ForkEvalExt for Forker {
         } = args;
 
         let compiler = self
-            .alloy_call(
-                Address::default(),
-                rainlang,
-                compilerCall {},
-                decode_errors,
-            )
+            .alloy_call(Address::default(), rainlang, compilerCall {}, decode_errors)
             .await?
             .typed_return;
 
@@ -122,12 +115,7 @@ impl ForkEvalExt for Forker {
         } = args;
 
         let compiler = self
-            .alloy_call(
-                Address::default(),
-                rainlang,
-                compilerCall {},
-                decode_errors,
-            )
+            .alloy_call(Address::default(), rainlang, compilerCall {}, decode_errors)
             .await?
             .typed_return;
         let interpreter = self
@@ -140,12 +128,7 @@ impl ForkEvalExt for Forker {
             .await?
             .typed_return;
         let store = self
-            .alloy_call(
-                Address::default(),
-                rainlang,
-                storeCall {},
-                decode_errors,
-            )
+            .alloy_call(Address::default(), rainlang, storeCall {}, decode_errors)
             .await?
             .typed_return;
 

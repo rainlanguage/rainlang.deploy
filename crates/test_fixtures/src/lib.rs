@@ -128,11 +128,7 @@ impl LocalEvm {
         let parser_addr = rainlang_instance.parser().call().await.unwrap();
         let store_addr = rainlang_instance.store().call().await.unwrap();
         let interpreter_addr = rainlang_instance.interpreter().call().await.unwrap();
-        let compiler_addr = rainlang_instance
-            .compiler()
-            .call()
-            .await
-            .unwrap();
+        let compiler_addr = rainlang_instance.compiler().call().await.unwrap();
 
         // Deploy rain contracts, then copy their runtime code to the
         // deterministic addresses that Rainlang returns.
