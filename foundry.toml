@@ -52,15 +52,14 @@ fs_permissions = [
   # `LibRainDeploySnapshot.deployTag` reads `[external.package].version` to name
   # the frozen per-release snapshot dir.
   { access = "read", path = "foundry.toml" },
-  # `BuildScript.regenerateConfig` reads these, stages the spliced result for
-  # `script/build.sh` to install, and refuses a repo without that hook.
+  # `BuildScript.regenerateConfig` reads these and stages the spliced result.
   { access = "read", path = "./.env.example" },
   { access = "read-write", path = "./.staged-config" },
-  { access = "read", path = "./script/build.sh" },
   { access = "write", path = "./deployments/latest/RainlangParser" },
   { access = "write", path = "./deployments/latest/RainlangStore" },
   { access = "write", path = "./deployments/latest/RainlangInterpreter" },
   { access = "write", path = "./deployments/latest/RainlangCompiler" },
+  { access = "read", path = ".github/workflows/manual-sol-artifacts.yaml" },
 ]
 
 gas_limit = "18446744073709551615"

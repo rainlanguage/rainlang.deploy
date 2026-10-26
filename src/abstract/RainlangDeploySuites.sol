@@ -8,7 +8,7 @@ import {
     DeployMechanism,
     DeploySuite,
     RainDeploySuitesBase
-} from "./RainDeploySuitesBase.sol";
+} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {
@@ -52,7 +52,7 @@ import {
 /// bakes in, and nothing else. That is what `DeploySuite.dependencies` means —
 /// what must already have code on a network or the deployment is broken on
 /// arrival — and it is decidable from the creation code, which is what
-/// `RainlangDeploySuitesTest` decides it from, in both directions. An address
+/// `RainlangDeployDeclarationTest` decides it from, in both directions. An address
 /// the bytecode never carries is not a precondition of anything: declaring one
 /// blocks the broadcast on every chain that lacks it, for a call that cannot
 /// happen, and freezes that claim into the append-only record at the next
