@@ -6,11 +6,11 @@ import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.25/src/abstract/RainD
 import {ExternalDeployment} from "rain-deploy-0.1.25/src/abstract/RainDeployDeclarationChecks.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.4/src/lib/LibTOFUTokenDecimals.sol";
-import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.7/src/lib/deploy/LibDecimalFloatDeploy.sol";
+import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.9/src/lib/deploy/LibDecimalFloatDeploy.sol";
 import {
     DEPLOYED_ADDRESS as LOG_TABLES_DEPLOYED_ADDRESS,
     BYTECODE_HASH as LOG_TABLES_BYTECODE_HASH
-} from "rain-math-float-deploy-0.1.7/src/generated/0_1_3/LogTables.sol";
+} from "rain-math-float-deploy-0.1.9/src/generated/0_1_3/LogTables.sol";
 import {RainlangParser} from "../../../src/concrete/RainlangParser.sol";
 import {RainlangStore} from "../../../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol";

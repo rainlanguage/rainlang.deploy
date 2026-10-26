@@ -7,15 +7,15 @@ import {LibRainDeploySnapshot} from "rain-deploy-0.1.25/src/lib/LibRainDeploySna
 import {LibRainDeploy} from "rain-deploy-0.1.25/src/lib/LibRainDeploy.sol";
 import {LibCodeGen} from "rain-sol-codegen-0.1.39/src/lib/LibCodeGen.sol";
 import {LibFs} from "rain-sol-codegen-0.1.39/src/lib/LibFs.sol";
-import {LibGenParseMeta} from "rainlang-0.2.27/src/lib/codegen/LibGenParseMeta.sol";
+import {LibGenParseMeta} from "rainlang-0.2.30/src/lib/codegen/LibGenParseMeta.sol";
 import {DeployCandidate} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.27/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.30/src/abstract/BaseRainlangParser.sol";
 import {RainlangStore} from "../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../src/concrete/RainlangInterpreter.sol";
 import {RainlangCompiler} from "../src/concrete/RainlangCompiler.sol";
-import {LibAllStandardOps} from "rainlang-0.2.27/src/lib/op/LibAllStandardOps.sol";
+import {LibAllStandardOps} from "rainlang-0.2.30/src/lib/op/LibAllStandardOps.sol";
 
 /// One contract's generated snapshot and the released-suites lib emitted from
 /// its record.
