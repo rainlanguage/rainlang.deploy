@@ -7,27 +7,27 @@ import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 import {LibInterpreterDeploy} from "../../../src/lib/deploy/LibInterpreterDeploy.sol";
 
 contract RainlangTest is Test {
-    function testExpressionDeployerAddress() external {
+    function testCompilerAddress() external {
         Rainlang rainlang = new Rainlang();
-        assertEq(rainlang.expressionDeployerAddress(), LibInterpreterDeploy.EXPRESSION_DEPLOYER_DEPLOYED_ADDRESS);
-        assertTrue(rainlang.expressionDeployerAddress() != address(0));
+        assertEq(rainlang.compiler(), LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS);
+        assertTrue(rainlang.compiler() != address(0));
     }
 
     function testInterpreterAddress() external {
         Rainlang rainlang = new Rainlang();
-        assertEq(rainlang.interpreterAddress(), LibInterpreterDeploy.INTERPRETER_DEPLOYED_ADDRESS);
-        assertTrue(rainlang.interpreterAddress() != address(0));
+        assertEq(rainlang.interpreter(), LibInterpreterDeploy.INTERPRETER_DEPLOYED_ADDRESS);
+        assertTrue(rainlang.interpreter() != address(0));
     }
 
     function testStoreAddress() external {
         Rainlang rainlang = new Rainlang();
-        assertEq(rainlang.storeAddress(), LibInterpreterDeploy.STORE_DEPLOYED_ADDRESS);
-        assertTrue(rainlang.storeAddress() != address(0));
+        assertEq(rainlang.store(), LibInterpreterDeploy.STORE_DEPLOYED_ADDRESS);
+        assertTrue(rainlang.store() != address(0));
     }
 
     function testParserAddress() external {
         Rainlang rainlang = new Rainlang();
-        assertEq(rainlang.parserAddress(), LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS);
-        assertTrue(rainlang.parserAddress() != address(0));
+        assertEq(rainlang.parser(), LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS);
+        assertTrue(rainlang.parser() != address(0));
     }
 }

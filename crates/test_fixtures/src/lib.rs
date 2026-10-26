@@ -45,8 +45,8 @@ sol!(
 
 sol!(
     #![sol(all_derives = true, rpc = true)]
-    Deployer,
-    "abi/RainlangExpressionDeployer.json"
+    Compiler,
+    "abi/RainlangCompiler.json"
 );
 
 sol!(
@@ -80,8 +80,8 @@ pub struct LocalEvm {
     /// Alloy parser contract instance deployed on this blockchain
     pub parser: Parser::ParserInstance<LocalEvmProvider, AnyNetwork>,
 
-    /// Alloy expression deployer contract instance deployed on this blockchain
-    pub deployer: Deployer::DeployerInstance<LocalEvmProvider, AnyNetwork>,
+    /// Alloy compiler contract instance deployed on this blockchain
+    pub compiler: Compiler::CompilerInstance<LocalEvmProvider, AnyNetwork>,
 
     /// Array of alloy ERC20 contract instances deployed on this blockchain
     pub tokens: Vec<ERC20::ERC20Instance<LocalEvmProvider, AnyNetwork>>,
@@ -125,11 +125,11 @@ impl LocalEvm {
         // components.
         let rainlang_instance = RainlangContract::deploy(provider.clone()).await.unwrap();
         let rainlang_addr = *rainlang_instance.address();
-        let parser_addr = rainlang_instance.parserAddress().call().await.unwrap();
-        let store_addr = rainlang_instance.storeAddress().call().await.unwrap();
-        let interpreter_addr = rainlang_instance.interpreterAddress().call().await.unwrap();
-        let deployer_addr = rainlang_instance
-            .expressionDeployerAddress()
+        let parser_addr = rainlang_instance.parser().call().await.unwrap();
+        let store_addr = rainlang_instance.store().call().await.unwrap();
+        let interpreter_addr = rainlang_instance.interpreter().call().await.unwrap();
+        let compiler_addr = rainlang_instance
+            .compiler()
             .call()
             .await
             .unwrap();
@@ -139,12 +139,12 @@ impl LocalEvm {
         let interpreter = Interpreter::deploy(provider.clone()).await.unwrap();
         let store = Store::deploy(provider.clone()).await.unwrap();
         let parser = Parser::deploy(provider.clone()).await.unwrap();
-        let deployer = Deployer::deploy(provider.clone()).await.unwrap();
+        let compiler = Compiler::deploy(provider.clone()).await.unwrap();
 
         let parser_code = provider.get_code_at(*parser.address()).await.unwrap();
         let store_code = provider.get_code_at(*store.address()).await.unwrap();
         let interpreter_code = provider.get_code_at(*interpreter.address()).await.unwrap();
-        let deployer_code = provider.get_code_at(*deployer.address()).await.unwrap();
+        let compiler_code = provider.get_code_at(*compiler.address()).await.unwrap();
 
         provider
             .anvil_set_code(parser_addr, parser_code)
@@ -159,7 +159,7 @@ impl LocalEvm {
             .await
             .unwrap();
         provider
-            .anvil_set_code(deployer_addr, deployer_code)
+            .anvil_set_code(compiler_addr, compiler_code)
             .await
             .unwrap();
 
@@ -169,7 +169,7 @@ impl LocalEvm {
             interpreter,
             store,
             parser,
-            deployer,
+            compiler,
             tokens: vec![],
             signer_wallets,
             rainlang: rainlang_addr,

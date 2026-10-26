@@ -6,8 +6,8 @@ pragma solidity ^0.8.25;
 
 import {DeployDependency, DeployMechanism, DeploySuite} from "rain-deploy-0.1.22/src/abstract/RainDeploySuitesBase.sol";
 
-/// @title LibRainlangExpressionDeployerReleased
-/// @notice Every frozen release of `RainlangExpressionDeployer`: one entry per file in
+/// @title LibRainlangCompilerReleased
+/// @notice Every frozen release of `RainlangCompiler`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
 ///
 /// The deploy address, code hash, creation code, runtime code and dependency
@@ -22,7 +22,7 @@ import {DeployDependency, DeployMechanism, DeploySuite} from "rain-deploy-0.1.22
 /// record. A moved source path retroactively updates every entry's artifact
 /// path, which is intended: the alternative is parsing this generated file
 /// back in to preserve what it last said.
-library LibRainlangExpressionDeployerReleased {
+library LibRainlangCompilerReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {

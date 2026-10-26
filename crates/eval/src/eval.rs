@@ -5,7 +5,7 @@ use rainlang_bindings::IInterpreterStoreV3::FullyQualifiedNamespace;
 use rainlang_bindings::IInterpreterV4::{EvalV4, eval4Call};
 use rainlang_bindings::IParserV2::parse2Call;
 use rainlang_bindings::Rainlang::{
-    expressionDeployerAddressCall, interpreterAddressCall, storeAddressCall,
+    compilerCall, interpreterCall, storeCall,
 };
 
 /// Arguments for evaluating a Rainlang string in a forked EVM context
@@ -16,7 +16,7 @@ pub struct ForkEvalArgs {
     /// The source index of the rainlang to evaluate
     pub source_index: u16,
     /// The address of the Rainlang contract. All component addresses
-    /// (deployer, interpreter, store, parser) are discovered from this
+    /// (compiler, interpreter, store, parser) are discovered from this
     /// address.
     pub rainlang: Address,
     /// The fully qualified namespace
@@ -57,7 +57,7 @@ impl From<ForkEvalArgs> for ForkParseArgs {
 /// Defined as an extension trait because `Forker` now lives in the external
 /// `rain-forker` crate, so inherent methods can't be added to it here.
 pub trait ForkEvalExt {
-    /// Parses a Rainlang string against the deployer discovered from `rainlang`.
+    /// Parses a Rainlang string against the compiler discovered from `rainlang`.
     fn fork_parse(
         &self,
         args: ForkParseArgs,
@@ -81,11 +81,11 @@ impl ForkEvalExt for Forker {
             decode_errors,
         } = args;
 
-        let deployer = self
+        let compiler = self
             .alloy_call(
                 Address::default(),
                 rainlang,
-                expressionDeployerAddressCall {},
+                compilerCall {},
                 decode_errors,
             )
             .await?
@@ -96,7 +96,7 @@ impl ForkEvalExt for Forker {
         };
 
         let parse_result = self
-            .alloy_call(Address::default(), deployer, parse_call, decode_errors)
+            .alloy_call(Address::default(), compiler, parse_call, decode_errors)
             .await?;
 
         Ok(parse_result)
@@ -105,7 +105,7 @@ impl ForkEvalExt for Forker {
     /// Evaluates the Rain language string and returns the evaluation result.
     ///
     /// Discovers all component addresses from Rainlang, parses the
-    /// Rainlang string via the deployer, then evaluates via the interpreter.
+    /// Rainlang string via the compiler, then evaluates via the interpreter.
     async fn fork_eval(
         &self,
         args: ForkEvalArgs,
@@ -121,11 +121,11 @@ impl ForkEvalExt for Forker {
             state_overlay,
         } = args;
 
-        let deployer = self
+        let compiler = self
             .alloy_call(
                 Address::default(),
                 rainlang,
-                expressionDeployerAddressCall {},
+                compilerCall {},
                 decode_errors,
             )
             .await?
@@ -134,7 +134,7 @@ impl ForkEvalExt for Forker {
             .alloy_call(
                 Address::default(),
                 rainlang,
-                interpreterAddressCall {},
+                interpreterCall {},
                 decode_errors,
             )
             .await?
@@ -143,7 +143,7 @@ impl ForkEvalExt for Forker {
             .alloy_call(
                 Address::default(),
                 rainlang,
-                storeAddressCall {},
+                storeCall {},
                 decode_errors,
             )
             .await?
@@ -153,7 +153,7 @@ impl ForkEvalExt for Forker {
             data: rainlang_string.as_bytes().to_vec().into(),
         };
         let parse_result = self
-            .alloy_call(Address::default(), deployer, parse_call, decode_errors)
+            .alloy_call(Address::default(), compiler, parse_call, decode_errors)
             .await?;
 
         let eval_args = eval4Call {

@@ -11,11 +11,11 @@ import {LibGenParseMeta} from "rainlang-interface-0.2.13/src/lib/codegen/LibGenP
 import {DeployCandidate} from "../src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
-import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.19/src/abstract/BaseRainlangParser.sol";
+import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.23/src/abstract/BaseRainlangParser.sol";
 import {RainlangStore} from "../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../src/concrete/RainlangInterpreter.sol";
-import {RainlangExpressionDeployer} from "../src/concrete/RainlangExpressionDeployer.sol";
-import {LibAllStandardOps} from "rainlang-0.2.19/src/lib/op/LibAllStandardOps.sol";
+import {RainlangCompiler} from "../src/concrete/RainlangCompiler.sol";
+import {LibAllStandardOps} from "rainlang-0.2.23/src/lib/op/LibAllStandardOps.sol";
 
 /// One contract's generated snapshot and the released-suites lib emitted from
 /// its record.
@@ -45,7 +45,7 @@ struct GeneratedContract {
 /// helper are a published consumer API.
 contract Build is BuildScript, RainlangDeploySuites {
     /// Every contract this repo generates deploy pins for, in deploy order:
-    /// the expression deployer calls the parser at its deterministic address,
+    /// the compiler calls the parser at its deterministic address,
     /// and `Rainlang` names all four of the others at theirs.
     /// @return The generated contracts.
     function generatedContracts() internal pure returns (GeneratedContract[] memory) {
@@ -53,8 +53,7 @@ contract Build is BuildScript, RainlangDeploySuites {
         contracts[0] = GeneratedContract({contractName: "RainlangParser", candidate: parserCandidate()});
         contracts[1] = GeneratedContract({contractName: "RainlangStore", candidate: storeCandidate()});
         contracts[2] = GeneratedContract({contractName: "RainlangInterpreter", candidate: interpreterCandidate()});
-        contracts[3] =
-            GeneratedContract({contractName: "RainlangExpressionDeployer", candidate: expressionDeployerCandidate()});
+        contracts[3] = GeneratedContract({contractName: "RainlangCompiler", candidate: compilerCandidate()});
         contracts[4] = GeneratedContract({contractName: "Rainlang", candidate: rainlangCandidate()});
         return contracts;
     }
@@ -104,7 +103,7 @@ contract Build is BuildScript, RainlangDeploySuites {
         buildRainlangParserPointers();
         buildRainlangStorePointers();
         buildRainlangInterpreterPointers();
-        buildRainlangExpressionDeployerPointers();
+        buildRainlangCompilerPointers();
     }
 
     /// The parser's non-deploy codegen: parse meta, operand handler pointers
@@ -161,19 +160,18 @@ contract Build is BuildScript, RainlangDeploySuites {
         );
     }
 
-    /// The expression deployer's non-deploy codegen: its described-by meta
+    /// The compiler's non-deploy codegen: its described-by meta
     /// hash and integrity function pointers.
-    function buildRainlangExpressionDeployerPointers() internal {
-        RainlangExpressionDeployer deployer =
-            RainlangExpressionDeployer(LibRainDeploy.zoltuAddress(type(RainlangExpressionDeployer).creationCode));
+    function buildRainlangCompilerPointers() internal {
+        RainlangCompiler compiler = RainlangCompiler(LibRainDeploy.zoltuAddress(type(RainlangCompiler).creationCode));
 
         LibFs.buildFileForContract(
             vm,
-            address(deployer),
-            "RainlangExpressionDeployerPointers",
+            address(compiler),
+            "RainlangCompilerPointers",
             string.concat(
-                LibCodeGen.describedByMetaHashConstantString(vm, "RainlangExpressionDeployer"),
-                LibCodeGen.integrityFunctionPointersConstantString(vm, deployer)
+                LibCodeGen.describedByMetaHashConstantString(vm, "RainlangCompiler"),
+                LibCodeGen.integrityFunctionPointersConstantString(vm, compiler)
             )
         );
     }

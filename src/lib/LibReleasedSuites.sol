@@ -14,7 +14,7 @@ import {LibRainlangStoreReleased} from "./LibRainlangStoreReleased.sol";
 
 import {LibRainlangInterpreterReleased} from "./LibRainlangInterpreterReleased.sol";
 
-import {LibRainlangExpressionDeployerReleased} from "./LibRainlangExpressionDeployerReleased.sol";
+import {LibRainlangCompilerReleased} from "./LibRainlangCompilerReleased.sol";
 
 import {LibRainlangReleased} from "./LibRainlangReleased.sol";
 
@@ -39,7 +39,7 @@ library LibReleasedSuites {
         released[0] = LibRainlangParserReleased.releasedSuites();
         released[1] = LibRainlangStoreReleased.releasedSuites();
         released[2] = LibRainlangInterpreterReleased.releasedSuites();
-        released[3] = LibRainlangExpressionDeployerReleased.releasedSuites();
+        released[3] = LibRainlangCompilerReleased.releasedSuites();
         released[4] = LibRainlangReleased.releasedSuites();
         return LibDeploySuiteConcat.concat(released);
     }

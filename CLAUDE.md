@@ -7,11 +7,11 @@ deliberately absent (rainlanguage/rainix#298).
 ## What this repo is
 
 The **deploy half** of `rainlang`: the concrete `RainlangParser`,
-`RainlangStore`, `RainlangInterpreter`, `RainlangExpressionDeployer` and
-`Rainlang`, their generated tables and deploy records, the deploy scripts +
-tests, and the Rust crates that bind the deployed contracts. The parser, eval
-loop, ops, integrity checks and the `BaseRainlang*` contracts the concretes
-extend are NOT here — they arrive as the `rainlang` Soldeer package.
+`RainlangStore`, `RainlangInterpreter`, `RainlangCompiler` and `Rainlang`, their
+generated tables and deploy records, the deploy scripts + tests, and the Rust
+crates that bind the deployed contracts. The parser, eval loop, ops, integrity
+checks and the `BaseRainlang*` contracts the concretes extend are NOT here —
+they arrive as the `rainlang` Soldeer package.
 
 ## Conventions an agent would get wrong
 
@@ -24,8 +24,8 @@ extend are NOT here — they arrive as the `rainlang` Soldeer package.
 - Pragma: concretes, scripts and tests pin `=0.8.25`; shipped libs and generated
   files float `^0.8.25`.
 - `/test` is NOT in `.soldeerignore`: word and extern repos import
-  `test/abstract/OpTest.sol` and `RainlangExpressionDeployerDeploymentTest.sol`
-  through the published package, and both extend the `rainlang` package's own
+  `test/abstract/OpTest.sol` and `RainlangCompilerDeploymentTest.sol` through
+  the published package, and both extend the `rainlang` package's own
   `test/abstract/` versions, so the package ships its tests too.
 - `recursive_deps` is off: every package an import resolves through is declared
   in `foundry.toml`, including ones reached only via `rainlang`.
@@ -53,8 +53,7 @@ After any change affecting bytecode, including a `rainlang` package bump:
 3. `./script/build.sh` (installs the staged `foundry.toml`/`.env.example`)
 4. `nix develop -c forge fmt`
 5. Repeat until `src/generated/` stops changing — deploy constants cascade
-   parser → expression deployer → Rainlang; interpreter also cascades to
-   Rainlang.
+   parser → compiler → Rainlang; interpreter also cascades to Rainlang.
 
 ## Release / deploy shape
 
@@ -64,9 +63,9 @@ it.
 
 `[external.package].version` in `foundry.toml` is the LAST Soldeer publish, not
 a next-version slot: a normal PR never moves it. Releasing is deploy (Manual sol
-artifacts, in suite order: parser, store, interpreter, expression-deployer,
-rainlang) → verify (`RainlangDeployChainTest`) → a PR carrying `cutRelease()`'s
-frozen dir and the version bump → merge → push `sol-v<x.y.z>`.
+artifacts, in suite order: parser, store, interpreter, compiler, rainlang) →
+verify (`RainlangDeployChainTest`) → a PR carrying `cutRelease()`'s frozen dir
+and the version bump → merge → push `sol-v<x.y.z>`.
 
 The Rust crates are NOT released by the tag — see `crates-release.yaml`. They
 are bindings whose version tracks code changes and publish on merge.

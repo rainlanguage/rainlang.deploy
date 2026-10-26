@@ -3,7 +3,7 @@ name = "rainlang_test_fixtures"
 version = "0.1.4"
 edition.workspace = true
 license.workspace = true
-description = "Local EVM test fixtures (deployer, interpreter, parser, store, and ERC20 helpers) for testing against the Rainlang interpreter."
+description = "Local EVM test fixtures (compiler, interpreter, parser, store, and ERC20 helpers) for testing against the Rainlang interpreter."
 homepage.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
