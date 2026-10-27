@@ -23,10 +23,11 @@ they arrive as the `rainlang` Soldeer package.
   and the pinned `rainlang` sources all move the pins if changed.
 - Pragma: concretes, scripts and tests pin `=0.8.25`; shipped libs and generated
   files float `^0.8.25`.
-- `/test` is NOT in `.soldeerignore`: word and extern repos import
-  `test/abstract/OpTest.sol` and `RainlangCompilerDeploymentTest.sol` through
-  the published package, and both extend the `rainlang` package's own
-  `test/abstract/` versions, so the package ships its tests too.
+- `.soldeerignore` is an allowlist and re-includes `/test`: word and extern
+  repos import `test/abstract/OpTest.sol` and
+  `RainlangCompilerDeploymentTest.sol` through the published package, and both
+  extend the `rainlang` package's own `test/abstract/` versions, so the package
+  ships its tests too.
 - `recursive_deps` is off: every package an import resolves through is declared
   in `foundry.toml`, including ones reached only via `rainlang`.
 - NatSpec: if a doc block has any explicit tag, every entry must be tagged.

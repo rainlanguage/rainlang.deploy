@@ -22,6 +22,14 @@ import {
     DEPENDENCIES as RainlangInterpreter_0_1_10_DEPENDENCIES
 } from "../generated/0_1_10/RainlangInterpreter.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangInterpreter_0_1_11_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangInterpreter_0_1_11_BYTECODE_HASH,
+    CREATION_CODE as RainlangInterpreter_0_1_11_CREATION_CODE,
+    RUNTIME_CODE as RainlangInterpreter_0_1_11_RUNTIME_CODE,
+    DEPENDENCIES as RainlangInterpreter_0_1_11_DEPENDENCIES
+} from "../generated/0_1_11/RainlangInterpreter.sol";
+
 /// @title LibRainlangInterpreterReleased
 /// @notice Every frozen release of `RainlangInterpreter`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -42,7 +50,7 @@ library LibRainlangInterpreterReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](2);
+        DeploySuite[] memory suites = new DeploySuite[](3);
         suites[0] = DeploySuite({
             suite: "interpreter@0_1_9",
             creationCode: RainlangInterpreter_0_1_9_CREATION_CODE,
@@ -62,6 +70,17 @@ library LibRainlangInterpreterReleased {
             storedRuntimeCode: RainlangInterpreter_0_1_10_RUNTIME_CODE,
             artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
             dependencies: abi.decode(RainlangInterpreter_0_1_10_DEPENDENCIES, (DeployDependency[])),
+            mechanism: DeployMechanism.Zoltu,
+            mechanismData: ""
+        });
+        suites[2] = DeploySuite({
+            suite: "interpreter@0_1_11",
+            creationCode: RainlangInterpreter_0_1_11_CREATION_CODE,
+            storedDeployedAddress: RainlangInterpreter_0_1_11_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangInterpreter_0_1_11_BYTECODE_HASH,
+            storedRuntimeCode: RainlangInterpreter_0_1_11_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
+            dependencies: abi.decode(RainlangInterpreter_0_1_11_DEPENDENCIES, (DeployDependency[])),
             mechanism: DeployMechanism.Zoltu,
             mechanismData: ""
         });
