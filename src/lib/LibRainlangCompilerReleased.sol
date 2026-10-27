@@ -6,6 +6,14 @@ pragma solidity ^0.8.25;
 
 import {DeployDependency, DeployMechanism, DeploySuite} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangCompiler_0_1_10_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangCompiler_0_1_10_BYTECODE_HASH,
+    CREATION_CODE as RainlangCompiler_0_1_10_CREATION_CODE,
+    RUNTIME_CODE as RainlangCompiler_0_1_10_RUNTIME_CODE,
+    DEPENDENCIES as RainlangCompiler_0_1_10_DEPENDENCIES
+} from "../generated/0_1_10/RainlangCompiler.sol";
+
 /// @title LibRainlangCompilerReleased
 /// @notice Every frozen release of `RainlangCompiler`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -26,7 +34,18 @@ library LibRainlangCompilerReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](0);
+        DeploySuite[] memory suites = new DeploySuite[](1);
+        suites[0] = DeploySuite({
+            suite: "compiler@0_1_10",
+            creationCode: RainlangCompiler_0_1_10_CREATION_CODE,
+            storedDeployedAddress: RainlangCompiler_0_1_10_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangCompiler_0_1_10_BYTECODE_HASH,
+            storedRuntimeCode: RainlangCompiler_0_1_10_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
+            dependencies: abi.decode(RainlangCompiler_0_1_10_DEPENDENCIES, (DeployDependency[])),
+            mechanism: DeployMechanism.Zoltu,
+            mechanismData: ""
+        });
         return suites;
     }
 }
