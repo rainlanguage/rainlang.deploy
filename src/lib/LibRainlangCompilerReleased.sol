@@ -22,6 +22,14 @@ import {
     DEPENDENCIES as RainlangCompiler_0_1_11_DEPENDENCIES
 } from "../generated/0_1_11/RainlangCompiler.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangCompiler_0_1_12_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangCompiler_0_1_12_BYTECODE_HASH,
+    CREATION_CODE as RainlangCompiler_0_1_12_CREATION_CODE,
+    RUNTIME_CODE as RainlangCompiler_0_1_12_RUNTIME_CODE,
+    DEPENDENCIES as RainlangCompiler_0_1_12_DEPENDENCIES
+} from "../generated/0_1_12/RainlangCompiler.sol";
+
 /// @title LibRainlangCompilerReleased
 /// @notice Every frozen release of `RainlangCompiler`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -42,7 +50,7 @@ library LibRainlangCompilerReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](2);
+        DeploySuite[] memory suites = new DeploySuite[](3);
         suites[0] = DeploySuite({
             suite: "compiler@0_1_10",
             creationCode: RainlangCompiler_0_1_10_CREATION_CODE,
@@ -62,6 +70,17 @@ library LibRainlangCompilerReleased {
             storedRuntimeCode: RainlangCompiler_0_1_11_RUNTIME_CODE,
             artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
             dependencies: abi.decode(RainlangCompiler_0_1_11_DEPENDENCIES, (DeployDependency[])),
+            mechanism: DeployMechanism.Zoltu,
+            mechanismData: ""
+        });
+        suites[2] = DeploySuite({
+            suite: "compiler@0_1_12",
+            creationCode: RainlangCompiler_0_1_12_CREATION_CODE,
+            storedDeployedAddress: RainlangCompiler_0_1_12_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangCompiler_0_1_12_BYTECODE_HASH,
+            storedRuntimeCode: RainlangCompiler_0_1_12_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
+            dependencies: abi.decode(RainlangCompiler_0_1_12_DEPENDENCIES, (DeployDependency[])),
             mechanism: DeployMechanism.Zoltu,
             mechanismData: ""
         });

@@ -30,6 +30,14 @@ import {
     DEPENDENCIES as RainlangStore_0_1_11_DEPENDENCIES
 } from "../generated/0_1_11/RainlangStore.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangStore_0_1_12_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangStore_0_1_12_BYTECODE_HASH,
+    CREATION_CODE as RainlangStore_0_1_12_CREATION_CODE,
+    RUNTIME_CODE as RainlangStore_0_1_12_RUNTIME_CODE,
+    DEPENDENCIES as RainlangStore_0_1_12_DEPENDENCIES
+} from "../generated/0_1_12/RainlangStore.sol";
+
 /// @title LibRainlangStoreReleased
 /// @notice Every frozen release of `RainlangStore`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -50,7 +58,7 @@ library LibRainlangStoreReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](3);
+        DeploySuite[] memory suites = new DeploySuite[](4);
         suites[0] = DeploySuite({
             suite: "store@0_1_9",
             creationCode: RainlangStore_0_1_9_CREATION_CODE,
@@ -81,6 +89,17 @@ library LibRainlangStoreReleased {
             storedRuntimeCode: RainlangStore_0_1_11_RUNTIME_CODE,
             artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
             dependencies: abi.decode(RainlangStore_0_1_11_DEPENDENCIES, (DeployDependency[])),
+            mechanism: DeployMechanism.Zoltu,
+            mechanismData: ""
+        });
+        suites[3] = DeploySuite({
+            suite: "store@0_1_12",
+            creationCode: RainlangStore_0_1_12_CREATION_CODE,
+            storedDeployedAddress: RainlangStore_0_1_12_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangStore_0_1_12_BYTECODE_HASH,
+            storedRuntimeCode: RainlangStore_0_1_12_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
+            dependencies: abi.decode(RainlangStore_0_1_12_DEPENDENCIES, (DeployDependency[])),
             mechanism: DeployMechanism.Zoltu,
             mechanismData: ""
         });
