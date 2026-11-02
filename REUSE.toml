@@ -6,6 +6,7 @@ path = [
   ".devcontainer.json",
   ".env.example",
   ".envrc",
+  ".github/pull_request_template.md",
   ".github/workflows/**/",
   ".gitignore",
   ".prettierignore",
