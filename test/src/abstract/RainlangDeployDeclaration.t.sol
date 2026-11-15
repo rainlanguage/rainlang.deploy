@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.32/src/abstract/RainDeployVerifyDeclaration.sol";
-import {ExternalDeployment} from "rain-deploy-0.1.32/src/abstract/RainDeployDeclarationChecks.sol";
+import {DeployDeclaration, ExternalDeployment} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.5/src/lib/LibTOFUTokenDecimals.sol";
 import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.9/src/lib/deploy/LibDecimalFloatDeploy.sol";
@@ -18,7 +18,14 @@ import {RainlangCompiler} from "../../../src/concrete/RainlangCompiler.sol";
 import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 
 contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployVerifyDeclaration {
-    function sourceCreationCode(string memory suite) internal pure override returns (bytes memory) {
+    function declaration() internal pure override returns (DeployDeclaration memory) {
+        DeployDeclaration memory declared = super.declaration();
+        declared.sourceCreationCode = sourceCreationCode;
+        declared.externalDeployments = externalDeployments();
+        return declared;
+    }
+
+    function sourceCreationCode(string memory suite) internal pure returns (bytes memory) {
         bytes32 key = keccak256(bytes(suite));
         if (key == keccak256("parser")) return type(RainlangParser).creationCode;
         if (key == keccak256("store")) return type(RainlangStore).creationCode;
@@ -29,7 +36,7 @@ contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployVerify
     }
 
     // The 0_1_9 interpreter reaches LogTables; the candidate does not.
-    function externalDeployments() internal pure override returns (ExternalDeployment[] memory) {
+    function externalDeployments() internal pure returns (ExternalDeployment[] memory) {
         ExternalDeployment[] memory externals = new ExternalDeployment[](3);
         externals[0] = ExternalDeployment({
             deployedAddress: address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT),

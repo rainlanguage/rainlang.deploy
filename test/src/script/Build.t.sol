@@ -13,7 +13,7 @@ import {BuildHarness} from "../concrete/BuildHarness.sol";
 /// `generatedContracts()` is the one list every hook inside `Build` reads, so
 /// the regeneration, the released-lib writer and the freeze cannot disagree
 /// with each other. The boundary is where they can: what this repo deploys is
-/// declared in `RainlangDeploySuites.candidateSuites()`, and the generator's
+/// declared in `RainlangDeploySuites.declaration()`, and the generator's
 /// list is a second hard-coded array in a second file.
 ///
 /// A candidate dropped from `generatedContracts()` by a refactor or a merge
