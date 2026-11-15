@@ -9,8 +9,8 @@ import {RainlangStore} from "../../../../src/concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../../../../src/concrete/RainlangInterpreter.sol";
 import {RainlangCompiler} from "../../../../src/concrete/RainlangCompiler.sol";
 import {Rainlang} from "../../../../src/concrete/Rainlang.sol";
-import {LibExtrospectBytecode} from "rain-extrospection-0.1.19/src/lib/LibExtrospectBytecode.sol";
-import {LibExtrospectMetamorphic} from "rain-extrospection-0.1.19/src/lib/LibExtrospectMetamorphic.sol";
+import {LibExtrospectBytecode} from "rain-extrospection-0.1.17/src/lib/LibExtrospectBytecode.sol";
+import {LibExtrospectMetamorphic} from "rain-extrospection-0.1.17/src/lib/LibExtrospectMetamorphic.sol";
 
 /// @title LibInterpreterDeployTest
 /// @notice What `LibInterpreterDeploy` asserts over and above the deploy

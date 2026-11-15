@@ -8,9 +8,9 @@ import {
     DeployDependency,
     DeploySuite,
     RainDeploySuitesBase
-} from "rain-deploy-0.1.33/src/abstract/RainDeploySuitesBase.sol";
-import {LibRainDeployDeclaration} from "rain-deploy-0.1.33/src/lib/LibRainDeployDeclaration.sol";
-import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.33/src/lib/LibRainDeployZoltuMechanism.sol";
+} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
+import {LibRainDeployDeclaration} from "rain-deploy-0.1.32/src/lib/LibRainDeployDeclaration.sol";
+import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.32/src/lib/LibRainDeployZoltuMechanism.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {

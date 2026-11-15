@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BuildScript} from "rain-deploy-0.1.33/src/abstract/BuildScript.sol";
-import {LibRainDeploySnapshot} from "rain-deploy-0.1.33/src/lib/LibRainDeploySnapshot.sol";
-import {LibRainDeploy} from "rain-deploy-0.1.33/src/lib/LibRainDeploy.sol";
+import {BuildScript} from "rain-deploy-0.1.32/src/abstract/BuildScript.sol";
+import {LibRainDeploySnapshot} from "rain-deploy-0.1.32/src/lib/LibRainDeploySnapshot.sol";
+import {LibRainDeploy} from "rain-deploy-0.1.32/src/lib/LibRainDeploy.sol";
 import {LibCodeGen} from "rain-sol-codegen-0.1.39/src/lib/LibCodeGen.sol";
 import {LibFs} from "rain-sol-codegen-0.1.39/src/lib/LibFs.sol";
 import {LibGenParseMeta} from "rainlang-0.2.35/src/lib/codegen/LibGenParseMeta.sol";
-import {DeployCandidate} from "rain-deploy-0.1.33/src/abstract/RainDeploySuitesBase.sol";
+import {DeployCandidate} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
 import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.35/src/abstract/BaseRainlangParser.sol";
