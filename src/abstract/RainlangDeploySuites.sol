@@ -4,11 +4,13 @@ pragma solidity =0.8.25;
 
 import {
     DeployCandidate,
+    DeployDeclaration,
     DeployDependency,
-    DeployMechanism,
     DeploySuite,
     RainDeploySuitesBase
 } from "rain-deploy-0.1.33/src/abstract/RainDeploySuitesBase.sol";
+import {LibRainDeployDeclaration} from "rain-deploy-0.1.33/src/lib/LibRainDeployDeclaration.sol";
+import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.33/src/lib/LibRainDeployZoltuMechanism.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {
@@ -73,19 +75,19 @@ import {
 /// product.
 abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// @inheritdoc RainDeploySuitesBase
-    function releasedSuites() internal pure override returns (DeploySuite[] memory) {
-        return LibReleasedSuites.releasedSuites();
-    }
-
-    /// @inheritdoc RainDeploySuitesBase
-    function candidateSuites() internal pure override returns (DeployCandidate[] memory) {
+    function declaration() internal pure override returns (DeployDeclaration memory) {
+        DeployDeclaration memory declared;
+        LibRainDeployDeclaration.extend(declared);
+        LibRainDeployZoltuMechanism.extend(declared);
+        LibRainDeployDeclaration.addReleased(declared, LibReleasedSuites.releasedSuites());
         DeployCandidate[] memory candidates = new DeployCandidate[](5);
         candidates[0] = parserCandidate();
         candidates[1] = storeCandidate();
         candidates[2] = interpreterCandidate();
         candidates[3] = compilerCandidate();
         candidates[4] = rainlangCandidate();
-        return candidates;
+        LibRainDeployDeclaration.addCandidates(declared, candidates);
+        return declared;
     }
 
     /// No dependencies. Declared through a named helper rather than an inline
@@ -97,7 +99,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     }
 
     /// This repo's rolling `RainlangParser` candidate. Each candidate is a
-    /// named function rather than an index into `candidateSuites`, because
+    /// named function rather than an index into `declaration().candidates`, because
     /// `script/Build.sol` emits snapshots from these candidates specifically,
     /// and because five full creation codes built in one frame do not fit the
     /// legacy codegen's stack.
@@ -117,8 +119,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedRuntimeCode: PARSER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangParser.sol:RainlangParser",
                 dependencies: noDependencies(),
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -139,8 +142,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedRuntimeCode: STORE_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
                 dependencies: noDependencies(),
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -172,8 +176,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedRuntimeCode: INTERPRETER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
                 dependencies: deps,
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -206,8 +211,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedRuntimeCode: COMPILER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
                 dependencies: deps,
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -251,8 +257,9 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
                 storedRuntimeCode: RAINLANG_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/Rainlang.sol:Rainlang",
                 dependencies: deps,
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
