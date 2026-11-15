@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.32/src/abstract/RainDeployVerifyDeclaration.sol";
+import {RainDeployDeclarationChecks} from "rain-deploy-0.1.32/src/abstract/RainDeployDeclarationChecks.sol";
 import {DeployDeclaration, ExternalDeployment} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.5/src/lib/LibTOFUTokenDecimals.sol";
@@ -17,12 +17,37 @@ import {RainlangInterpreter} from "../../../src/concrete/RainlangInterpreter.sol
 import {RainlangCompiler} from "../../../src/concrete/RainlangCompiler.sol";
 import {Rainlang} from "../../../src/concrete/Rainlang.sol";
 
-contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployVerifyDeclaration {
-    function declaration() internal pure override returns (DeployDeclaration memory) {
-        DeployDeclaration memory declared = super.declaration();
+// `RainlangDeploySuites.declaration()` is not virtual and sets neither field the checks read, so the checks run here.
+contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployDeclarationChecks {
+    function checkedDeclaration() internal pure returns (DeployDeclaration memory) {
+        DeployDeclaration memory declared = declaration();
         declared.sourceCreationCode = sourceCreationCode;
         declared.externalDeployments = externalDeployments();
         return declared;
+    }
+
+    function testDispatchChoicesAreTheSuiteKeys() external view {
+        checkDispatchChoicesAreTheSuiteKeys(checkedDeclaration());
+    }
+
+    function testCandidateArtifactPathsAreSource() external view {
+        checkCandidateArtifactPathsAreSource(checkedDeclaration());
+    }
+
+    function testDependenciesAreNonZeroAndUnique() external pure {
+        checkDependenciesAreNonZeroAndUnique(checkedDeclaration());
+    }
+
+    function testDependenciesAreTheEmbeddedDeployments() external pure {
+        checkDependenciesAreTheEmbeddedDeployments(checkedDeclaration());
+    }
+
+    function testDependencyRuntimeCodeIsKnown() external pure {
+        checkDependencyRuntimeCodeIsKnown(checkedDeclaration());
+    }
+
+    function testCandidateRuntimeCodeFitsEip170() external pure {
+        checkCandidateRuntimeCodeFitsEip170(checkedDeclaration());
     }
 
     function sourceCreationCode(string memory suite) internal pure returns (bytes memory) {
