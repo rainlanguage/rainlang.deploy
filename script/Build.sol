@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {BuildScript} from "rain-deploy-0.1.32/src/abstract/BuildScript.sol";
+import {BuildScript, GeneratedContract, RetiredContract} from "rain-deploy-0.1.32/src/abstract/BuildScript.sol";
 import {LibRainDeploySnapshot} from "rain-deploy-0.1.32/src/lib/LibRainDeploySnapshot.sol";
 import {LibRainDeploy} from "rain-deploy-0.1.32/src/lib/LibRainDeploy.sol";
 import {LibCodeGen} from "rain-sol-codegen-0.1.39/src/lib/LibCodeGen.sol";
 import {LibFs} from "rain-sol-codegen-0.1.39/src/lib/LibFs.sol";
 import {LibGenParseMeta} from "rainlang-0.2.35/src/lib/codegen/LibGenParseMeta.sol";
-import {DeployCandidate} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
+import {DeployDeclaration} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
 import {RainlangDeploySuites} from "../src/abstract/RainlangDeploySuites.sol";
 import {RainlangParser} from "../src/concrete/RainlangParser.sol";
 import {PARSE_META_BUILD_DEPTH} from "rainlang-0.2.35/src/abstract/BaseRainlangParser.sol";
@@ -17,21 +17,8 @@ import {RainlangInterpreter} from "../src/concrete/RainlangInterpreter.sol";
 import {RainlangCompiler} from "../src/concrete/RainlangCompiler.sol";
 import {LibAllStandardOps} from "rainlang-0.2.35/src/lib/op/LibAllStandardOps.sol";
 
-/// One contract's generated snapshot and the released-suites lib emitted from
-/// its record.
-struct GeneratedContract {
-    /// Places the snapshot inside `src/generated/<dir>/` and names the
-    /// generated released-suites lib.
-    string contractName;
-    /// Snapshots are written from what its `snapshot.artifactPath` compiles to
-    /// and its `snapshot.dependencies`; the released lib takes its suite key
-    /// and artifact path from its `snapshot`.
-    DeployCandidate candidate;
-}
-
 /// @title Build
 /// @notice Generates the deploy pins for every contract this repo deploys.
-/// `generatedContracts()` is the only list, read by every hook below.
 ///
 /// `run()` (what CI regenerates against) rewrites the rolling
 /// `src/generated/candidate/` snapshots, the non-deploy codegen beside them
@@ -39,75 +26,60 @@ struct GeneratedContract {
 /// `src/generated/<tag>/` first. Frozen snapshots are append-only historical
 /// records, never regenerated here.
 ///
-/// Unlike the org's template deploy repos there are no generated alias libs:
-/// `src/lib/deploy/LibInterpreterDeploy.sol` is hand-written over the
-/// candidate snapshots because its constant names and its `etchRainlang`
-/// helper are a published consumer API.
+/// `RainlangExpressionDeployer` is retired: the compiler's record name in
+/// releases frozen before its rename, whose entries stay released.
+///
+/// There are no generated alias libs: `src/lib/deploy/LibInterpreterDeploy.sol`
+/// is hand-written over the candidate snapshots because its constant names and
+/// its `etchRainlang` helper are a published consumer API.
 contract Build is BuildScript, RainlangDeploySuites {
-    /// Every contract this repo generates deploy pins for, in deploy order:
-    /// the compiler calls the parser at its deterministic address,
-    /// and `Rainlang` names all four of the others at theirs.
-    /// @return The generated contracts.
-    function generatedContracts() internal pure returns (GeneratedContract[] memory) {
+    /// @inheritdoc BuildScript
+    function generatedContracts(DeployDeclaration memory d)
+        internal
+        pure
+        override
+        returns (GeneratedContract[] memory)
+    {
         GeneratedContract[] memory contracts = new GeneratedContract[](5);
-        contracts[0] = GeneratedContract({contractName: "RainlangParser", candidate: parserCandidate()});
-        contracts[1] = GeneratedContract({contractName: "RainlangStore", candidate: storeCandidate()});
-        contracts[2] = GeneratedContract({contractName: "RainlangInterpreter", candidate: interpreterCandidate()});
-        contracts[3] = GeneratedContract({contractName: "RainlangCompiler", candidate: compilerCandidate()});
-        contracts[4] = GeneratedContract({contractName: "Rainlang", candidate: rainlangCandidate()});
+        contracts[0] = GeneratedContract({
+            contractName: "RainlangParser",
+            constantPrefix: "",
+            candidate: declaredCandidate(d, parserCandidate().snapshot.suite)
+        });
+        contracts[1] = GeneratedContract({
+            contractName: "RainlangStore",
+            constantPrefix: "",
+            candidate: declaredCandidate(d, storeCandidate().snapshot.suite)
+        });
+        contracts[2] = GeneratedContract({
+            contractName: "RainlangInterpreter",
+            constantPrefix: "",
+            candidate: declaredCandidate(d, interpreterCandidate().snapshot.suite)
+        });
+        contracts[3] = GeneratedContract({
+            contractName: "RainlangCompiler",
+            constantPrefix: "",
+            candidate: declaredCandidate(d, compilerCandidate().snapshot.suite)
+        });
+        contracts[4] = GeneratedContract({
+            contractName: "Rainlang",
+            constantPrefix: "",
+            candidate: declaredCandidate(d, rainlangCandidate().snapshot.suite)
+        });
         return contracts;
     }
 
     /// @inheritdoc BuildScript
-    /// @dev In declaration order — the order the aggregate emits its entries
-    /// in.
-    function snapshotContractNames() internal pure override returns (string[] memory) {
-        GeneratedContract[] memory contracts = generatedContracts();
-        string[] memory names = new string[](contracts.length);
-        for (uint256 i = 0; i < contracts.length; i++) {
-            names[i] = contracts[i].contractName;
-        }
-        return names;
-    }
-
-    /// `generatedContracts()` with `RainlangExpressionDeployer`, the compiler's
-    /// record name in releases frozen before its rename, ahead of the compiler.
-    /// @return The contracts that get a released-suites lib, in deploy order.
-    function releasedContracts() internal pure returns (GeneratedContract[] memory) {
-        GeneratedContract[] memory generated = generatedContracts();
-        GeneratedContract[] memory contracts = new GeneratedContract[](generated.length + 1);
-        for (uint256 i = 0; i < 3; i++) {
-            contracts[i] = generated[i];
-        }
-        contracts[3] = GeneratedContract({contractName: "RainlangExpressionDeployer", candidate: compilerCandidate()});
-        for (uint256 i = 3; i < generated.length; i++) {
-            contracts[i + 1] = generated[i];
-        }
-        return contracts;
-    }
-
-    /// @inheritdoc BuildScript
-    /// @dev Every released-suites lib and the aggregate over them. No alias
-    /// libs: `LibInterpreterDeploy` is hand-written.
-    function regenerateLibs() internal override {
-        GeneratedContract[] memory contracts = releasedContracts();
-        string[] memory names = new string[](contracts.length);
-        for (uint256 i = 0; i < contracts.length; i++) {
-            LibRainDeploySnapshot.writeReleasedSuitesLib(
-                vm,
-                LibRainDeploySnapshot.LIB_DIR,
-                recordRoot(),
-                contracts[i].contractName,
-                contracts[i].candidate.snapshot
-            );
-            names[i] = contracts[i].contractName;
-        }
-        LibRainDeploySnapshot.writeReleasedSuitesAggregate(vm, LibRainDeploySnapshot.LIB_DIR, names);
+    function retiredContracts() internal pure override returns (RetiredContract[] memory) {
+        RetiredContract[] memory retired = new RetiredContract[](1);
+        retired[0] =
+            RetiredContract({contractName: "RainlangExpressionDeployer", template: compilerCandidate().snapshot});
+        return retired;
     }
 
     /// @inheritdoc BuildScript
     function regenerateSnapshots() internal override {
-        GeneratedContract[] memory contracts = generatedContracts();
+        GeneratedContract[] memory contracts = checkedGeneratedContracts(declaration());
         for (uint256 i = 0; i < contracts.length; i++) {
             LibRainDeploySnapshot.writeSnapshot(
                 vm,

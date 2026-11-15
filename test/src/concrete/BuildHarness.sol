@@ -17,13 +17,13 @@ contract BuildHarness is Build {
     /// The generator's list.
     /// @return The generated contracts.
     function externalGeneratedContracts() external pure returns (GeneratedContract[] memory) {
-        return generatedContracts();
+        return generatedContracts(declaration());
     }
 
     /// The names a release cut from this script freezes.
     /// @return The snapshot contract names.
     function externalSnapshotContractNames() external pure returns (string[] memory) {
-        return snapshotContractNames();
+        return snapshotContractNames(generatedContracts(declaration()));
     }
 
     /// The deploy declaration's list, through the same guarded reader every
