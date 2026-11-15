@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.25/src/abstract/RainDeployVerifyDeclaration.sol";
-import {ExternalDeployment} from "rain-deploy-0.1.25/src/abstract/RainDeployDeclarationChecks.sol";
+import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.33/src/abstract/RainDeployVerifyDeclaration.sol";
+import {ExternalDeployment} from "rain-deploy-0.1.33/src/abstract/RainDeployDeclarationChecks.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
-import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.4/src/lib/LibTOFUTokenDecimals.sol";
+import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.5/src/lib/LibTOFUTokenDecimals.sol";
 import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.9/src/lib/deploy/LibDecimalFloatDeploy.sol";
 import {
     DEPLOYED_ADDRESS as LOG_TABLES_DEPLOYED_ADDRESS,

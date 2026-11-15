@@ -8,13 +8,13 @@ import {
     DeployMechanism,
     DeploySuite,
     RainDeploySuitesBase
-} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
+} from "rain-deploy-0.1.33/src/abstract/RainDeploySuitesBase.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {
     DEPLOYED_ADDRESS as TOFU_DECIMALS_DEPLOYED_ADDRESS,
     RUNTIME_CODE as TOFU_DECIMALS_RUNTIME_CODE
-} from "rain-tofu-erc20-decimals-deploy-0.1.4/src/generated/0_1_0/TOFUTokenDecimals.sol";
+} from "rain-tofu-erc20-decimals-deploy-0.1.5/src/generated/0_1_0/TOFUTokenDecimals.sol";
 import {
     DEPLOYED_ADDRESS as DECIMAL_FLOAT_DEPLOYED_ADDRESS,
     RUNTIME_CODE as DECIMAL_FLOAT_RUNTIME_CODE
