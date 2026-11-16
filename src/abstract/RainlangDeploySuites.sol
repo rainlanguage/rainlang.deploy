@@ -54,6 +54,12 @@ import {
     RUNTIME_CODE as RAINLANG_RUNTIME_CODE_CANDIDATE
 } from "../generated/candidate/Rainlang.sol";
 
+string constant PARSER_SUITE = "parser";
+string constant STORE_SUITE = "store";
+string constant INTERPRETER_SUITE = "interpreter";
+string constant COMPILER_SUITE = "compiler";
+string constant RAINLANG_SUITE = "rainlang";
+
 /// @title RainlangDeploySuites
 /// @notice Everything this repo deploys, declared ONCE: the five hand-written
 /// candidates below, and the released side read from the generated
@@ -106,11 +112,11 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
 
     function sourceCreationCode(string memory suite) internal pure returns (bytes memory) {
         bytes32 key = keccak256(bytes(suite));
-        if (key == keccak256("parser")) return type(RainlangParser).creationCode;
-        if (key == keccak256("store")) return type(RainlangStore).creationCode;
-        if (key == keccak256("interpreter")) return type(RainlangInterpreter).creationCode;
-        if (key == keccak256("compiler")) return type(RainlangCompiler).creationCode;
-        if (key == keccak256("rainlang")) return type(Rainlang).creationCode;
+        if (key == keccak256(bytes(PARSER_SUITE))) return type(RainlangParser).creationCode;
+        if (key == keccak256(bytes(STORE_SUITE))) return type(RainlangStore).creationCode;
+        if (key == keccak256(bytes(INTERPRETER_SUITE))) return type(RainlangInterpreter).creationCode;
+        if (key == keccak256(bytes(COMPILER_SUITE))) return type(RainlangCompiler).creationCode;
+        if (key == keccak256(bytes(RAINLANG_SUITE))) return type(Rainlang).creationCode;
         revert(string.concat("no source for suite: ", suite));
     }
 
@@ -152,7 +158,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     function parserCandidate() internal pure returns (DeployCandidate memory) {
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "parser",
+                suite: PARSER_SUITE,
                 creationCode: PARSER_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.PARSER_DEPLOYED_CODEHASH,
@@ -175,7 +181,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     function storeCandidate() internal pure returns (DeployCandidate memory) {
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "store",
+                suite: STORE_SUITE,
                 creationCode: STORE_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.STORE_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.STORE_DEPLOYED_CODEHASH,
@@ -209,7 +215,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "interpreter",
+                suite: INTERPRETER_SUITE,
                 creationCode: INTERPRETER_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.INTERPRETER_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.INTERPRETER_DEPLOYED_CODEHASH,
@@ -244,7 +250,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "compiler",
+                suite: COMPILER_SUITE,
                 creationCode: COMPILER_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.COMPILER_DEPLOYED_CODEHASH,
@@ -290,7 +296,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "rainlang",
+                suite: RAINLANG_SUITE,
                 creationCode: RAINLANG_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.RAINLANG_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.RAINLANG_DEPLOYED_CODEHASH,
