@@ -4,17 +4,31 @@ pragma solidity =0.8.25;
 
 import {
     DeployCandidate,
+    DeployDeclaration,
     DeployDependency,
-    DeployMechanism,
     DeploySuite,
+    ExternalDeployment,
     RainDeploySuitesBase
-} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
+} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
+import {LibRainDeployDeclaration} from "rain-deploy-0.1.32/src/lib/LibRainDeployDeclaration.sol";
+import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.32/src/lib/LibRainDeployZoltuMechanism.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
+import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.5/src/lib/LibTOFUTokenDecimals.sol";
+import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.9/src/lib/deploy/LibDecimalFloatDeploy.sol";
+import {
+    DEPLOYED_ADDRESS as LOG_TABLES_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as LOG_TABLES_BYTECODE_HASH
+} from "rain-math-float-deploy-0.1.9/src/generated/0_1_3/LogTables.sol";
+import {RainlangParser} from "../concrete/RainlangParser.sol";
+import {RainlangStore} from "../concrete/RainlangStore.sol";
+import {RainlangInterpreter} from "../concrete/RainlangInterpreter.sol";
+import {RainlangCompiler} from "../concrete/RainlangCompiler.sol";
+import {Rainlang} from "../concrete/Rainlang.sol";
 import {
     DEPLOYED_ADDRESS as TOFU_DECIMALS_DEPLOYED_ADDRESS,
     RUNTIME_CODE as TOFU_DECIMALS_RUNTIME_CODE
-} from "rain-tofu-erc20-decimals-deploy-0.1.4/src/generated/0_1_0/TOFUTokenDecimals.sol";
+} from "rain-tofu-erc20-decimals-deploy-0.1.5/src/generated/0_1_0/TOFUTokenDecimals.sol";
 import {
     DEPLOYED_ADDRESS as DECIMAL_FLOAT_DEPLOYED_ADDRESS,
     RUNTIME_CODE as DECIMAL_FLOAT_RUNTIME_CODE
@@ -39,6 +53,12 @@ import {
     CREATION_CODE as RAINLANG_CREATION_CODE_CANDIDATE,
     RUNTIME_CODE as RAINLANG_RUNTIME_CODE_CANDIDATE
 } from "../generated/candidate/Rainlang.sol";
+
+string constant PARSER_SUITE = "parser";
+string constant STORE_SUITE = "store";
+string constant INTERPRETER_SUITE = "interpreter";
+string constant COMPILER_SUITE = "compiler";
+string constant RAINLANG_SUITE = "rainlang";
 
 /// @title RainlangDeploySuites
 /// @notice Everything this repo deploys, declared ONCE: the five hand-written
@@ -73,19 +93,47 @@ import {
 /// product.
 abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     /// @inheritdoc RainDeploySuitesBase
-    function releasedSuites() internal pure override returns (DeploySuite[] memory) {
-        return LibReleasedSuites.releasedSuites();
-    }
-
-    /// @inheritdoc RainDeploySuitesBase
-    function candidateSuites() internal pure override returns (DeployCandidate[] memory) {
+    function declaration() internal pure override returns (DeployDeclaration memory) {
+        DeployDeclaration memory declared;
+        LibRainDeployDeclaration.extend(declared);
+        LibRainDeployZoltuMechanism.extend(declared);
+        LibRainDeployDeclaration.addReleased(declared, LibReleasedSuites.releasedSuites());
         DeployCandidate[] memory candidates = new DeployCandidate[](5);
         candidates[0] = parserCandidate();
         candidates[1] = storeCandidate();
         candidates[2] = interpreterCandidate();
         candidates[3] = compilerCandidate();
         candidates[4] = rainlangCandidate();
-        return candidates;
+        LibRainDeployDeclaration.addCandidates(declared, candidates);
+        declared.sourceCreationCode = sourceCreationCode;
+        declared.externalDeployments = externalDeployments();
+        return declared;
+    }
+
+    function sourceCreationCode(string memory suite) internal pure returns (bytes memory) {
+        bytes32 key = keccak256(bytes(suite));
+        if (key == keccak256(bytes(PARSER_SUITE))) return type(RainlangParser).creationCode;
+        if (key == keccak256(bytes(STORE_SUITE))) return type(RainlangStore).creationCode;
+        if (key == keccak256(bytes(INTERPRETER_SUITE))) return type(RainlangInterpreter).creationCode;
+        if (key == keccak256(bytes(COMPILER_SUITE))) return type(RainlangCompiler).creationCode;
+        if (key == keccak256(bytes(RAINLANG_SUITE))) return type(Rainlang).creationCode;
+        revert(string.concat("no source for suite: ", suite));
+    }
+
+    // The 0_1_9 interpreter reaches LogTables; the candidate does not.
+    function externalDeployments() internal pure returns (ExternalDeployment[] memory) {
+        ExternalDeployment[] memory externals = new ExternalDeployment[](3);
+        externals[0] = ExternalDeployment({
+            deployedAddress: address(LibTOFUTokenDecimals.TOFU_DECIMALS_DEPLOYMENT),
+            codeHash: LibTOFUTokenDecimals.TOFU_DECIMALS_EXPECTED_CODE_HASH
+        });
+        externals[1] = ExternalDeployment({
+            deployedAddress: LibDecimalFloatDeploy.ZOLTU_DEPLOYED_DECIMAL_FLOAT_ADDRESS,
+            codeHash: LibDecimalFloatDeploy.DECIMAL_FLOAT_CONTRACT_HASH
+        });
+        externals[2] =
+            ExternalDeployment({deployedAddress: LOG_TABLES_DEPLOYED_ADDRESS, codeHash: LOG_TABLES_BYTECODE_HASH});
+        return externals;
     }
 
     /// No dependencies. Declared through a named helper rather than an inline
@@ -97,7 +145,7 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     }
 
     /// This repo's rolling `RainlangParser` candidate. Each candidate is a
-    /// named function rather than an index into `candidateSuites`, because
+    /// named function rather than an index into `declaration().candidates`, because
     /// `script/Build.sol` emits snapshots from these candidates specifically,
     /// and because five full creation codes built in one frame do not fit the
     /// legacy codegen's stack.
@@ -110,15 +158,16 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     function parserCandidate() internal pure returns (DeployCandidate memory) {
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "parser",
+                suite: PARSER_SUITE,
                 creationCode: PARSER_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.PARSER_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.PARSER_DEPLOYED_CODEHASH,
                 storedRuntimeCode: PARSER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangParser.sol:RainlangParser",
                 dependencies: noDependencies(),
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -132,15 +181,16 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
     function storeCandidate() internal pure returns (DeployCandidate memory) {
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "store",
+                suite: STORE_SUITE,
                 creationCode: STORE_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.STORE_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.STORE_DEPLOYED_CODEHASH,
                 storedRuntimeCode: STORE_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
                 dependencies: noDependencies(),
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -165,15 +215,16 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "interpreter",
+                suite: INTERPRETER_SUITE,
                 creationCode: INTERPRETER_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.INTERPRETER_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.INTERPRETER_DEPLOYED_CODEHASH,
                 storedRuntimeCode: INTERPRETER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
                 dependencies: deps,
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -199,15 +250,16 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "compiler",
+                suite: COMPILER_SUITE,
                 creationCode: COMPILER_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.COMPILER_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.COMPILER_DEPLOYED_CODEHASH,
                 storedRuntimeCode: COMPILER_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
                 dependencies: deps,
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });
@@ -244,15 +296,16 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         });
         return DeployCandidate({
             snapshot: DeploySuite({
-                suite: "rainlang",
+                suite: RAINLANG_SUITE,
                 creationCode: RAINLANG_CREATION_CODE_CANDIDATE,
                 storedDeployedAddress: LibInterpreterDeploy.RAINLANG_DEPLOYED_ADDRESS,
                 storedBytecodeHash: LibInterpreterDeploy.RAINLANG_DEPLOYED_CODEHASH,
                 storedRuntimeCode: RAINLANG_RUNTIME_CODE_CANDIDATE,
                 artifactPath: "src/concrete/Rainlang.sol:Rainlang",
                 dependencies: deps,
-                mechanism: DeployMechanism.Zoltu,
-                mechanismData: ""
+                mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+                networks: new string[](0),
+                describedByMeta: ""
             }),
             unanchorableReason: ""
         });

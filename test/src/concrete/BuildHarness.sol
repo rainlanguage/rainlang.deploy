@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {Build, GeneratedContract} from "../../../script/Build.sol";
-import {DeployCandidate} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
+import {DeployCandidate} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
 
 /// @title BuildHarness
 /// @notice An external seam onto the two internal declarations `BuildTest`
@@ -17,19 +17,19 @@ contract BuildHarness is Build {
     /// The generator's list.
     /// @return The generated contracts.
     function externalGeneratedContracts() external pure returns (GeneratedContract[] memory) {
-        return generatedContracts();
+        return generatedContracts(declaration());
     }
 
     /// The names a release cut from this script freezes.
     /// @return The snapshot contract names.
     function externalSnapshotContractNames() external pure returns (string[] memory) {
-        return snapshotContractNames();
+        return snapshotContractNames(generatedContracts(declaration()));
     }
 
     /// The deploy declaration's list, through the same guarded reader every
     /// other consumer of the declaration uses.
     /// @return The declared candidates.
-    function externalCandidateSuites() external view returns (DeployCandidate[] memory) {
-        return checkedCandidateSuites();
+    function externalCandidateSuites() external pure returns (DeployCandidate[] memory) {
+        return checkedCandidateSuites(declaration());
     }
 }

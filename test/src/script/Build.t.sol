@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {GeneratedContract} from "../../../script/Build.sol";
-import {DeployCandidate} from "rain-deploy-0.1.25/src/abstract/RainDeploySuitesBase.sol";
+import {DeployCandidate} from "rain-deploy-0.1.32/src/abstract/RainDeploySuitesBase.sol";
 import {BuildHarness} from "../concrete/BuildHarness.sol";
 
 /// @title BuildTest
@@ -13,7 +13,7 @@ import {BuildHarness} from "../concrete/BuildHarness.sol";
 /// `generatedContracts()` is the one list every hook inside `Build` reads, so
 /// the regeneration, the released-lib writer and the freeze cannot disagree
 /// with each other. The boundary is where they can: what this repo deploys is
-/// declared in `RainlangDeploySuites.candidateSuites()`, and the generator's
+/// declared in `RainlangDeploySuites.declaration()`, and the generator's
 /// list is a second hard-coded array in a second file.
 ///
 /// A candidate dropped from `generatedContracts()` by a refactor or a merge
