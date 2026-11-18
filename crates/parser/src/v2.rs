@@ -3,9 +3,9 @@ use alloy::network::{Network, TransactionBuilder};
 use alloy::primitives::Address;
 use alloy::providers::Provider;
 use alloy::sol_types::SolCall;
+use rainlang_addresses::RainlangAddresses;
 use rainlang_bindings::IParserPragmaV1::*;
 use rainlang_bindings::IParserV2::*;
-use rainlang_addresses::RainlangAddresses;
 
 async fn eth_call<C: SolCall, N: Network, P: Provider<N>>(
     provider: &P,
