@@ -39,6 +39,14 @@ import {
     DEPENDENCIES as RainlangCompiler_0_1_13_DEPENDENCIES
 } from "../generated/0_1_13/RainlangCompiler.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangCompiler_0_1_14_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangCompiler_0_1_14_BYTECODE_HASH,
+    CREATION_CODE as RainlangCompiler_0_1_14_CREATION_CODE,
+    RUNTIME_CODE as RainlangCompiler_0_1_14_RUNTIME_CODE,
+    DEPENDENCIES as RainlangCompiler_0_1_14_DEPENDENCIES
+} from "../generated/0_1_14/RainlangCompiler.sol";
+
 /// @title LibRainlangCompilerReleased
 /// @notice Every frozen release of `RainlangCompiler`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -59,7 +67,7 @@ library LibRainlangCompilerReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](4);
+        DeploySuite[] memory suites = new DeploySuite[](5);
         suites[0] = DeploySuite({
             suite: "compiler@0_1_10",
             creationCode: RainlangCompiler_0_1_10_CREATION_CODE,
@@ -104,6 +112,18 @@ library LibRainlangCompilerReleased {
             storedRuntimeCode: RainlangCompiler_0_1_13_RUNTIME_CODE,
             artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
             dependencies: abi.decode(RainlangCompiler_0_1_13_DEPENDENCIES, (DeployDependency[])),
+            mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+            networks: new string[](0),
+            describedByMeta: ""
+        });
+        suites[4] = DeploySuite({
+            suite: "compiler@0_1_14",
+            creationCode: RainlangCompiler_0_1_14_CREATION_CODE,
+            storedDeployedAddress: RainlangCompiler_0_1_14_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangCompiler_0_1_14_BYTECODE_HASH,
+            storedRuntimeCode: RainlangCompiler_0_1_14_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangCompiler.sol:RainlangCompiler",
+            dependencies: abi.decode(RainlangCompiler_0_1_14_DEPENDENCIES, (DeployDependency[])),
             mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
             networks: new string[](0),
             describedByMeta: ""
