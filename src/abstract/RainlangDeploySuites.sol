@@ -9,17 +9,17 @@ import {
     DeploySuite,
     ExternalDeployment,
     RainDeploySuitesBase
-} from "rain-deploy-0.1.35/src/abstract/RainDeploySuitesBase.sol";
-import {LibRainDeployDeclaration} from "rain-deploy-0.1.35/src/lib/LibRainDeployDeclaration.sol";
-import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.35/src/lib/LibRainDeployZoltuMechanism.sol";
+} from "rain-deploy-0.1.36/src/abstract/RainDeploySuitesBase.sol";
+import {LibRainDeployDeclaration} from "rain-deploy-0.1.36/src/lib/LibRainDeployDeclaration.sol";
+import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.36/src/lib/LibRainDeployZoltuMechanism.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.5/src/lib/LibTOFUTokenDecimals.sol";
-import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.11/src/lib/deploy/LibDecimalFloatDeploy.sol";
+import {LibDecimalFloatDeploy} from "rain-math-float-deploy-0.1.12/src/lib/deploy/LibDecimalFloatDeploy.sol";
 import {
     DEPLOYED_ADDRESS as LOG_TABLES_DEPLOYED_ADDRESS,
     BYTECODE_HASH as LOG_TABLES_BYTECODE_HASH
-} from "rain-math-float-deploy-0.1.11/src/generated/0_1_3/LogTables.sol";
+} from "rain-math-float-deploy-0.1.12/src/generated/0_1_3/LogTables.sol";
 import {RainlangParser} from "../concrete/RainlangParser.sol";
 import {RainlangStore} from "../concrete/RainlangStore.sol";
 import {RainlangInterpreter} from "../concrete/RainlangInterpreter.sol";
@@ -28,11 +28,11 @@ import {Rainlang} from "../concrete/Rainlang.sol";
 import {
     DEPLOYED_ADDRESS as TOFU_DECIMALS_DEPLOYED_ADDRESS,
     RUNTIME_CODE as TOFU_DECIMALS_RUNTIME_CODE
-} from "rain-tofu-erc20-decimals-deploy-0.1.7/src/generated/0_1_0/TOFUTokenDecimals.sol";
+} from "rain-tofu-erc20-decimals-deploy-0.1.8/src/generated/0_1_0/TOFUTokenDecimals.sol";
 import {
     DEPLOYED_ADDRESS as DECIMAL_FLOAT_DEPLOYED_ADDRESS,
     RUNTIME_CODE as DECIMAL_FLOAT_RUNTIME_CODE
-} from "rain-math-float-deploy-0.1.11/src/generated/0_1_5/DecimalFloat.sol";
+} from "rain-math-float-deploy-0.1.12/src/generated/0_1_5/DecimalFloat.sol";
 import {
     CREATION_CODE as PARSER_CREATION_CODE_CANDIDATE,
     RUNTIME_CODE as PARSER_RUNTIME_CODE_CANDIDATE

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.35/src/abstract/RainDeployVerifyDeclaration.sol";
+import {RainDeployVerifyDeclaration} from "rain-deploy-0.1.36/src/abstract/RainDeployVerifyDeclaration.sol";
 import {RainlangDeploySuites} from "../../../src/abstract/RainlangDeploySuites.sol";
 
 contract RainlangDeployDeclarationTest is RainlangDeploySuites, RainDeployVerifyDeclaration {}
