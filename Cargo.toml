@@ -26,8 +26,8 @@ wasm-bindgen-utils = "0.1.2"
 [workspace.dependencies.rainlang_parser]
 path = "crates/parser"
 
-[workspace.dependencies.rainlang_dispair]
-path = "crates/dispair"
+[workspace.dependencies.rainlang_addresses]
+path = "crates/addresses"
 version = "0.1.19"
 
 [workspace.dependencies.rainlang_bindings]
