@@ -1,4 +1,4 @@
-//! DISPaiR address tuple: compiler, interpreter, store, parser.
+//! Rainlang deployment address tuple: compiler, interpreter, store, parser.
 
 use alloy::primitives::Address;
 
@@ -7,17 +7,17 @@ use alloy::primitives::Address;
 /// Groups the four contract addresses that together form a complete
 /// Rain interpreter deployment.
 #[derive(Debug, Clone, Default)]
-pub struct DISPaiR {
+pub struct RainlangAddresses {
     pub compiler: Address,
     pub interpreter: Address,
     pub store: Address,
     pub parser: Address,
 }
 
-impl DISPaiR {
-    /// Creates a new `DISPaiR` from the four component addresses.
+impl RainlangAddresses {
+    /// Creates a new `RainlangAddresses` from the four component addresses.
     pub fn new(compiler: Address, interpreter: Address, store: Address, parser: Address) -> Self {
-        DISPaiR {
+        RainlangAddresses {
             compiler,
             interpreter,
             store,
@@ -37,11 +37,11 @@ mod tests {
         let store = Address::repeat_byte(0x3);
         let parser = Address::repeat_byte(0x4);
 
-        let dispair = DISPaiR::new(compiler, interpreter, store, parser);
+        let addresses = RainlangAddresses::new(compiler, interpreter, store, parser);
 
-        assert_eq!(dispair.compiler, compiler);
-        assert_eq!(dispair.interpreter, interpreter);
-        assert_eq!(dispair.store, store);
-        assert_eq!(dispair.parser, parser);
+        assert_eq!(addresses.compiler, compiler);
+        assert_eq!(addresses.interpreter, interpreter);
+        assert_eq!(addresses.store, store);
+        assert_eq!(addresses.parser, parser);
     }
 }

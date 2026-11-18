@@ -5,7 +5,7 @@ use alloy::providers::Provider;
 use alloy::sol_types::SolCall;
 use rainlang_bindings::IParserPragmaV1::*;
 use rainlang_bindings::IParserV2::*;
-use rainlang_dispair::DISPaiR;
+use rainlang_addresses::RainlangAddresses;
 
 async fn eth_call<C: SolCall, N: Network, P: Provider<N>>(
     provider: &P,
@@ -121,8 +121,8 @@ pub struct ParserV2 {
     pub compiler_address: Address,
 }
 
-impl From<DISPaiR> for ParserV2 {
-    fn from(val: DISPaiR) -> Self {
+impl From<RainlangAddresses> for ParserV2 {
+    fn from(val: RainlangAddresses) -> Self {
         Self {
             compiler_address: val.compiler,
         }
@@ -216,19 +216,19 @@ mod tests {
     };
 
     #[tokio::test]
-    async fn test_from_dispair() {
+    async fn test_from_rainlang_addresses() {
         let compiler_address = Address::repeat_byte(0x4);
 
-        let dispair = DISPaiR {
+        let addresses = RainlangAddresses {
             compiler: compiler_address,
             interpreter: Address::repeat_byte(0x2),
             store: Address::repeat_byte(0x3),
             parser: Address::repeat_byte(0x1),
         };
 
-        let parser: ParserV2 = dispair.clone().into();
+        let parser: ParserV2 = addresses.clone().into();
 
-        assert_eq!(parser.compiler_address, dispair.compiler);
+        assert_eq!(parser.compiler_address, addresses.compiler);
         assert_eq!(parser.compiler_address, compiler_address);
     }
 

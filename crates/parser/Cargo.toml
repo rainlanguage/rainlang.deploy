@@ -7,7 +7,7 @@ description = "Rainlang Parser Rust Crate."
 homepage.workspace = true
 
 [dependencies]
-rainlang_dispair = { workspace = true }
+rainlang_addresses = { workspace = true }
 rainlang_bindings = { workspace = true }
 alloy = { workspace = true, features = [
   "providers",
