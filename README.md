@@ -39,7 +39,7 @@ harness over the live contracts (`OpTest`, `LibInterpreterDeploy`) depend on
   — the `rainlang` package's test harness bound to the deployed contracts, for
   word and extern repos.
 - `script/Deploy.sol` — deploys one suite via the Zoltu deterministic deployer.
-- `crates/` — Rust bindings, dispair, parser, eval, cli and test fixtures over
+- `crates/` — Rust bindings, addresses, parser, eval, cli and test fixtures over
   the deployed contracts' ABIs, copied from the forge artifacts by
   `script/CopyArtifacts.sol`.
 

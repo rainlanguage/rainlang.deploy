@@ -1,13 +1,13 @@
 [package]
 name = "rainlang_parser"
-version = "0.1.11"
+version = "0.1.13"
 edition.workspace = true
 license.workspace = true
 description = "Rainlang Parser Rust Crate."
 homepage.workspace = true
 
 [dependencies]
-rainlang_dispair = { workspace = true }
+rainlang_addresses = { workspace = true }
 rainlang_bindings = { workspace = true }
 alloy = { workspace = true, features = [
   "providers",

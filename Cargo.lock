@@ -3672,7 +3672,7 @@ dependencies = [
 
 [[package]]
 name = "rainlang-eval"
-version = "0.1.9"
+version = "0.1.11"
 dependencies = [
  "alloy",
  "eyre",
@@ -3688,33 +3688,33 @@ dependencies = [
 ]
 
 [[package]]
-name = "rainlang_bindings"
-version = "0.1.23"
+name = "rainlang_addresses"
+version = "0.1.20"
 dependencies = [
  "alloy",
 ]
 
 [[package]]
-name = "rainlang_dispair"
-version = "0.1.18"
+name = "rainlang_bindings"
+version = "0.1.25"
 dependencies = [
  "alloy",
 ]
 
 [[package]]
 name = "rainlang_parser"
-version = "0.1.11"
+version = "0.1.13"
 dependencies = [
  "alloy",
+ "rainlang_addresses",
  "rainlang_bindings",
- "rainlang_dispair",
  "thiserror 1.0.69",
  "tokio",
 ]
 
 [[package]]
 name = "rainlang_test_fixtures"
-version = "0.1.7"
+version = "0.1.9"
 dependencies = [
  "alloy",
  "getrandom 0.2.16",

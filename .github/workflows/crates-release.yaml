@@ -23,5 +23,5 @@ jobs:
   release:
     uses: rainlanguage/rainix/.github/workflows/rainix-autopublish.yaml@main
     with:
-      crates: rainlang_bindings rainlang_dispair rainlang_parser rainlang-eval rainlang_test_fixtures
+      crates: rainlang_bindings rainlang_addresses rainlang_parser rainlang-eval rainlang_test_fixtures
     secrets: inherit
