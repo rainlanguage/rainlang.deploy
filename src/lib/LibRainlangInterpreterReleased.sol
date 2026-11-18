@@ -39,6 +39,14 @@ import {
     DEPENDENCIES as RainlangInterpreter_0_1_12_DEPENDENCIES
 } from "../generated/0_1_12/RainlangInterpreter.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangInterpreter_0_1_13_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangInterpreter_0_1_13_BYTECODE_HASH,
+    CREATION_CODE as RainlangInterpreter_0_1_13_CREATION_CODE,
+    RUNTIME_CODE as RainlangInterpreter_0_1_13_RUNTIME_CODE,
+    DEPENDENCIES as RainlangInterpreter_0_1_13_DEPENDENCIES
+} from "../generated/0_1_13/RainlangInterpreter.sol";
+
 /// @title LibRainlangInterpreterReleased
 /// @notice Every frozen release of `RainlangInterpreter`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -59,7 +67,7 @@ library LibRainlangInterpreterReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](4);
+        DeploySuite[] memory suites = new DeploySuite[](5);
         suites[0] = DeploySuite({
             suite: "interpreter@0_1_9",
             creationCode: RainlangInterpreter_0_1_9_CREATION_CODE,
@@ -104,6 +112,18 @@ library LibRainlangInterpreterReleased {
             storedRuntimeCode: RainlangInterpreter_0_1_12_RUNTIME_CODE,
             artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
             dependencies: abi.decode(RainlangInterpreter_0_1_12_DEPENDENCIES, (DeployDependency[])),
+            mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+            networks: new string[](0),
+            describedByMeta: ""
+        });
+        suites[4] = DeploySuite({
+            suite: "interpreter@0_1_13",
+            creationCode: RainlangInterpreter_0_1_13_CREATION_CODE,
+            storedDeployedAddress: RainlangInterpreter_0_1_13_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangInterpreter_0_1_13_BYTECODE_HASH,
+            storedRuntimeCode: RainlangInterpreter_0_1_13_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangInterpreter.sol:RainlangInterpreter",
+            dependencies: abi.decode(RainlangInterpreter_0_1_13_DEPENDENCIES, (DeployDependency[])),
             mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
             networks: new string[](0),
             describedByMeta: ""

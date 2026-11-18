@@ -39,6 +39,14 @@ import {
     DEPENDENCIES as Rainlang_0_1_12_DEPENDENCIES
 } from "../generated/0_1_12/Rainlang.sol";
 
+import {
+    DEPLOYED_ADDRESS as Rainlang_0_1_13_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as Rainlang_0_1_13_BYTECODE_HASH,
+    CREATION_CODE as Rainlang_0_1_13_CREATION_CODE,
+    RUNTIME_CODE as Rainlang_0_1_13_RUNTIME_CODE,
+    DEPENDENCIES as Rainlang_0_1_13_DEPENDENCIES
+} from "../generated/0_1_13/Rainlang.sol";
+
 /// @title LibRainlangReleased
 /// @notice Every frozen release of `Rainlang`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -59,7 +67,7 @@ library LibRainlangReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](4);
+        DeploySuite[] memory suites = new DeploySuite[](5);
         suites[0] = DeploySuite({
             suite: "rainlang@0_1_9",
             creationCode: Rainlang_0_1_9_CREATION_CODE,
@@ -104,6 +112,18 @@ library LibRainlangReleased {
             storedRuntimeCode: Rainlang_0_1_12_RUNTIME_CODE,
             artifactPath: "src/concrete/Rainlang.sol:Rainlang",
             dependencies: abi.decode(Rainlang_0_1_12_DEPENDENCIES, (DeployDependency[])),
+            mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+            networks: new string[](0),
+            describedByMeta: ""
+        });
+        suites[4] = DeploySuite({
+            suite: "rainlang@0_1_13",
+            creationCode: Rainlang_0_1_13_CREATION_CODE,
+            storedDeployedAddress: Rainlang_0_1_13_DEPLOYED_ADDRESS,
+            storedBytecodeHash: Rainlang_0_1_13_BYTECODE_HASH,
+            storedRuntimeCode: Rainlang_0_1_13_RUNTIME_CODE,
+            artifactPath: "src/concrete/Rainlang.sol:Rainlang",
+            dependencies: abi.decode(Rainlang_0_1_13_DEPENDENCIES, (DeployDependency[])),
             mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
             networks: new string[](0),
             describedByMeta: ""
