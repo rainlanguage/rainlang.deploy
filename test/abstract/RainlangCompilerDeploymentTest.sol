@@ -4,11 +4,11 @@ pragma solidity =0.8.25;
 
 import {
     RainlangCompilerDeploymentTest as BaseRainlangCompilerDeploymentTest
-} from "rainlang-0.2.39/test/abstract/RainlangCompilerDeploymentTest.sol";
-import {BaseRainlangStore} from "rainlang-0.2.39/src/abstract/BaseRainlangStore.sol";
-import {BaseRainlangParser} from "rainlang-0.2.39/src/abstract/BaseRainlangParser.sol";
-import {BaseRainlangInterpreter} from "rainlang-0.2.39/src/abstract/BaseRainlangInterpreter.sol";
-import {BaseRainlangCompiler} from "rainlang-0.2.39/src/abstract/BaseRainlangCompiler.sol";
+} from "rainlang-0.2.40/test/abstract/RainlangCompilerDeploymentTest.sol";
+import {BaseRainlangStore} from "rainlang-0.2.40/src/abstract/BaseRainlangStore.sol";
+import {BaseRainlangParser} from "rainlang-0.2.40/src/abstract/BaseRainlangParser.sol";
+import {BaseRainlangInterpreter} from "rainlang-0.2.40/src/abstract/BaseRainlangInterpreter.sol";
+import {BaseRainlangCompiler} from "rainlang-0.2.40/src/abstract/BaseRainlangCompiler.sol";
 import {LibInterpreterDeploy} from "../../src/lib/deploy/LibInterpreterDeploy.sol";
 
 /// @title RainlangCompilerDeploymentTest
