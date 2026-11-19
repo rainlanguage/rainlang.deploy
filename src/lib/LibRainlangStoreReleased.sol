@@ -55,6 +55,14 @@ import {
     DEPENDENCIES as RainlangStore_0_1_14_DEPENDENCIES
 } from "../generated/0_1_14/RainlangStore.sol";
 
+import {
+    DEPLOYED_ADDRESS as RainlangStore_0_1_15_DEPLOYED_ADDRESS,
+    BYTECODE_HASH as RainlangStore_0_1_15_BYTECODE_HASH,
+    CREATION_CODE as RainlangStore_0_1_15_CREATION_CODE,
+    RUNTIME_CODE as RainlangStore_0_1_15_RUNTIME_CODE,
+    DEPENDENCIES as RainlangStore_0_1_15_DEPENDENCIES
+} from "../generated/0_1_15/RainlangStore.sol";
+
 /// @title LibRainlangStoreReleased
 /// @notice Every frozen release of `RainlangStore`: one entry per file in
 /// the append-only `src/generated/<tag>/` record, in tag order.
@@ -75,7 +83,7 @@ library LibRainlangStoreReleased {
     /// Every frozen release, in tag order.
     /// @return The released suites.
     function releasedSuites() internal pure returns (DeploySuite[] memory) {
-        DeploySuite[] memory suites = new DeploySuite[](6);
+        DeploySuite[] memory suites = new DeploySuite[](7);
         suites[0] = DeploySuite({
             suite: "store@0_1_9",
             creationCode: RainlangStore_0_1_9_CREATION_CODE,
@@ -144,6 +152,18 @@ library LibRainlangStoreReleased {
             storedRuntimeCode: RainlangStore_0_1_14_RUNTIME_CODE,
             artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
             dependencies: abi.decode(RainlangStore_0_1_14_DEPENDENCIES, (DeployDependency[])),
+            mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
+            networks: new string[](0),
+            describedByMeta: ""
+        });
+        suites[6] = DeploySuite({
+            suite: "store@0_1_15",
+            creationCode: RainlangStore_0_1_15_CREATION_CODE,
+            storedDeployedAddress: RainlangStore_0_1_15_DEPLOYED_ADDRESS,
+            storedBytecodeHash: RainlangStore_0_1_15_BYTECODE_HASH,
+            storedRuntimeCode: RainlangStore_0_1_15_RUNTIME_CODE,
+            artifactPath: "src/concrete/RainlangStore.sol:RainlangStore",
+            dependencies: abi.decode(RainlangStore_0_1_15_DEPENDENCIES, (DeployDependency[])),
             mechanismData: LibRainDeployZoltuMechanism.mechanismData(),
             networks: new string[](0),
             describedByMeta: ""

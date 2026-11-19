@@ -42,6 +42,11 @@ on:
           - interpreter@0_1_14
           - compiler@0_1_14
           - rainlang@0_1_14
+          - parser@0_1_15
+          - store@0_1_15
+          - interpreter@0_1_15
+          - compiler@0_1_15
+          - rainlang@0_1_15
       verify:
         description: >-
           Verify on the block explorer after broadcasting. Turn it off when the verification retry loop would outlast the deploy; `Manual sol verify` repairs verification later without re-broadcasting.
