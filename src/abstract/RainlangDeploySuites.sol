@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
+import {StdConstants} from "forge-std-1.17.0/src/StdConstants.sol";
 import {
     DeployCandidate,
     DeployDeclaration,
@@ -9,9 +10,11 @@ import {
     DeploySuite,
     ExternalDeployment,
     RainDeploySuitesBase
-} from "rain-deploy-0.1.37/src/abstract/RainDeploySuitesBase.sol";
-import {LibRainDeployDeclaration} from "rain-deploy-0.1.37/src/lib/LibRainDeployDeclaration.sol";
-import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.37/src/lib/LibRainDeployZoltuMechanism.sol";
+} from "rain-deploy-0.1.38/src/abstract/RainDeploySuitesBase.sol";
+import {LibRainDeploy} from "rain-deploy-0.1.38/src/lib/LibRainDeploy.sol";
+import {LibRainDeployDeclaration} from "rain-deploy-0.1.38/src/lib/LibRainDeployDeclaration.sol";
+import {LibRainDeploySnapshot, UnreleasableVersion} from "rain-deploy-0.1.38/src/lib/LibRainDeploySnapshot.sol";
+import {LibRainDeployZoltuMechanism} from "rain-deploy-0.1.38/src/lib/LibRainDeployZoltuMechanism.sol";
 import {LibInterpreterDeploy} from "../lib/deploy/LibInterpreterDeploy.sol";
 import {LibReleasedSuites} from "../lib/LibReleasedSuites.sol";
 import {LibTOFUTokenDecimals} from "rain-tofu-erc20-decimals-0.1.5/src/lib/LibTOFUTokenDecimals.sol";
@@ -92,12 +95,28 @@ string constant RAINLANG_SUITE = "rainlang";
 /// otherwise be free to drop it, and the deployment process is part of the
 /// product.
 abstract contract RainlangDeploySuites is RainDeploySuitesBase {
+    /// The newest `IRainlang` (V1) release. `0_1_9` freezes the V1 DISPaiR set
+    /// current SDK, order-compiler and solver tooling calls, so it keeps the
+    /// declaration's networks and is required on `zerog` too.
+    string constant LAST_RAINLANG_V1_RELEASE = "0_1_9";
+
+    /// The newest release cut before `zerog` joined the roster. Releases after
+    /// `LAST_RAINLANG_V1_RELEASE` and up to this tag (`0_1_10` to `0_1_15`)
+    /// are `IRainlangV2` builds 0G does not run, so they are required only on
+    /// `networksBeforeZerog()`. A release cut after this tag is required on
+    /// `zerog`, so before that cut every suite it freezes MUST be live on
+    /// `zerog`, unchanged ones included.
+    string constant LAST_RELEASE_BEFORE_ZEROG = "0_1_15";
+
     /// @inheritdoc RainDeploySuitesBase
+    /// @dev The releases pass through `narrowReleasedNetworks` first, so only
+    /// the V1 `0_1_9` release and releases cut after `zerog` joined are
+    /// required on `zerog`.
     function declaration() internal pure override returns (DeployDeclaration memory) {
         DeployDeclaration memory declared;
         LibRainDeployDeclaration.extend(declared);
         LibRainDeployZoltuMechanism.extend(declared);
-        LibRainDeployDeclaration.addReleased(declared, LibReleasedSuites.releasedSuites());
+        LibRainDeployDeclaration.addReleased(declared, narrowReleasedNetworks(LibReleasedSuites.releasedSuites()));
         DeployCandidate[] memory candidates = new DeployCandidate[](5);
         candidates[0] = parserCandidate();
         candidates[1] = storeCandidate();
@@ -108,6 +127,62 @@ abstract contract RainlangDeploySuites is RainDeploySuitesBase {
         declared.sourceCreationCode = sourceCreationCode;
         declared.externalDeployments = externalDeployments();
         return declared;
+    }
+
+    /// The roster the releases after `LAST_RAINLANG_V1_RELEASE` and up to
+    /// `LAST_RELEASE_BEFORE_ZEROG` were cut and deployed for. Frozen: a network
+    /// added to the catalogue later does not join it.
+    /// @return The network names.
+    function networksBeforeZerog() internal pure returns (string[] memory) {
+        string[] memory networks = new string[](9);
+        networks[0] = LibRainDeploy.ARBITRUM_ONE;
+        networks[1] = LibRainDeploy.BASE;
+        networks[2] = LibRainDeploy.BASE_SEPOLIA;
+        networks[3] = LibRainDeploy.BSC;
+        networks[4] = LibRainDeploy.ETHEREUM;
+        networks[5] = LibRainDeploy.FLARE;
+        networks[6] = LibRainDeploy.HYPEREVM;
+        networks[7] = LibRainDeploy.POLYGON;
+        networks[8] = LibRainDeploy.ROBINHOOD;
+        return networks;
+    }
+
+    /// Sets the networks of each release `notRequiredOnZerog` selects to
+    /// `networksBeforeZerog()`, and leaves every other release to the
+    /// declaration's networks.
+    /// @param released The releases, mutated.
+    /// @return `released`.
+    function narrowReleasedNetworks(DeploySuite[] memory released) internal pure returns (DeploySuite[] memory) {
+        for (uint256 i = 0; i < released.length; i++) {
+            if (notRequiredOnZerog(released[i].suite)) {
+                released[i].networks = networksBeforeZerog();
+            }
+        }
+        return released;
+    }
+
+    /// Whether a suite key's tag is after `LAST_RAINLANG_V1_RELEASE` and at or
+    /// before `LAST_RELEASE_BEFORE_ZEROG`, ordered by
+    /// `LibRainDeploySnapshot.tagPrecedes`. A key with no tag is not, and a tag
+    /// that is not `LibRainDeploySnapshot.isTag` is refused.
+    /// @param suite The suite key.
+    /// @return True if the release is not required on `zerog`.
+    function notRequiredOnZerog(string memory suite) internal pure returns (bool) {
+        bytes memory key = bytes(suite);
+        uint256 start = bytes(suiteKeyName(suite)).length + 1;
+        if (start > key.length) {
+            return false;
+        }
+        bytes memory tag = new bytes(key.length - start);
+        for (uint256 i = 0; i < tag.length; i++) {
+            tag[i] = key[start + i];
+        }
+        if (!LibRainDeploySnapshot.isTag(string(tag))) {
+            // forge-lint: disable-next-line
+            revert UnreleasableVersion(string(tag));
+        }
+        return LibRainDeploySnapshot.tagPrecedes(StdConstants.VM, LAST_RAINLANG_V1_RELEASE, string(tag))
+            && !LibRainDeploySnapshot.tagPrecedes(StdConstants.VM, LAST_RELEASE_BEFORE_ZEROG, string(tag));
     }
 
     function sourceCreationCode(string memory suite) internal pure returns (bytes memory) {
